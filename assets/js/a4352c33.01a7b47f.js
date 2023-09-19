@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkraastin_api=self.webpackChunkraastin_api||[]).push([[7457],{1530:a=>{a.exports=JSON.parse('{"label":"hola","permalink":"/api/blog/tags/hola","allTagsPath":"/api/blog/tags","count":1}')}}]);

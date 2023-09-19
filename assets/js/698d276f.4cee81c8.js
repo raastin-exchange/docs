@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkraastin_api=self.webpackChunkraastin_api||[]).push([[3352],{3090:a=>{a.exports=JSON.parse('{"permalink":"/api/blog/tags/facebook","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
