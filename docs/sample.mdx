@@ -4,13 +4,17 @@ import Json from "../src/components/Json";
 
 # اطلاعات بازارهای راستین
 
+<div style={{direction: 'ltr'}}>
 
-> HTTP Request (**https://api.raastin.com/**)
+    HTTP Request https://api.raastin.com
 
-> #### GET: api/v1/market/symbols/?base_asset=USDT&asset=BTC
+</div>
 
-> نمونه： (http://api.raastin.com/api/v1/market/symbols/?base_asset=USDT&asset=BTC)
+<div style={{textAlign: 'left'}}>
 
+    GET /api/v1/market/symbols/
+
+</div>
 
 
 
@@ -18,10 +22,21 @@ import Json from "../src/components/Json";
 <Tabs
     defaultValue="json"
     values={[
-        {label: 'توضیحات', value: 'table'},
+        {label: 'Table', value: 'table'},
         {label: 'JSON', value: 'json'},
     ]}>
 <TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
 ```
 
 
@@ -41,10 +56,43 @@ import Json from "../src/components/Json";
 
 ```mdx-code-block
 </TabItem>
+<TabItem value="response">
+```
+| نام پارامتر | نوع |  اجباری | توضیح |
+| ----------- | ----------- | ----------- | ----------- |
+| name | Text |  Header | Title |
+| asset | Text | Paragraph | Text |
+| base_asset | Text | Paragraph | Text |
+| taker_fee | Text | Paragraph | Text |
+| maker_fee | Text | Paragraph | Text |
+| tick_size | Text | Paragraph | Text |
+| step_size | Text | Paragraph | Text |
+| min_trade_quantity | Text | Paragraph | Text |
+| max_trade_quantity | Text | Paragraph | Text |
+| enable | Text | Paragraph | Text |
+
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
 <TabItem value="json">
 
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+    {label: 'Request', value: 'request'},
+    {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
 ```json
-    {
+{
     "name": "BTCUSDT"
     "asset": "BTC"
     "base_asset": "USDT"
@@ -55,9 +103,34 @@ import Json from "../src/components/Json";
     "min_trade_quantity": "0.00001"
     "max_trade_quantity": "9000"
     "enable": false
-    }
+}
 
 ```
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+    "name": "BTCUSDT"
+    "asset": "BTC"
+    "base_asset": "USDT"
+    "taker_fee": "0.002"
+    "maker_fee": "0"
+    "tick_size": 2,
+    "step_size": 5,
+    "min_trade_quantity": "0.00001"
+    "max_trade_quantity": "9000"
+    "enable": false
+}
+
+```
+
+</TabItem>
+
+</Tabs>
 
 </TabItem>
 </Tabs>

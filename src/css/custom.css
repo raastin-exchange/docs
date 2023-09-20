@@ -5,7 +5,14 @@
  */
 
 /* You can override the default Infima variables here. */
+
+@font-face {
+  font-family: 'IRANSansX-Medium';
+  src: url('/font/woff2/IRANSansX-Medium.woff2');
+}
+
 :root {
+  --ifm-font-family-base: 'IRANSansX-Medium';
   --ifm-color-primary: #2e8555;
   --ifm-color-primary-dark: #29784c;
   --ifm-color-primary-darker: #277148;
@@ -28,3 +35,4 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
