@@ -1,0 +1,65 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Json from "../src/components/Json";
+
+# اطلاعات بازارهای راستین
+
+
+> HTTP Request (**https://api.raastin.com/**)
+
+> #### GET: api/v1/market/symbols/?base_asset=USDT&asset=BTC
+
+> نمونه： (http://api.raastin.com/api/v1/market/symbols/?base_asset=USDT&asset=BTC)
+
+
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'توضیحات', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+| نام پارامتر | نوع |  اجباری | توضیح |
+| ----------- | ----------- | ----------- | ----------- |
+| name | Text |  Header | Title |
+| asset | Text | Paragraph | Text |
+| base_asset | Text | Paragraph | Text |
+| taker_fee | Text | Paragraph | Text |
+| maker_fee | Text | Paragraph | Text |
+| tick_size | Text | Paragraph | Text |
+| step_size | Text | Paragraph | Text |
+| min_trade_quantity | Text | Paragraph | Text |
+| max_trade_quantity | Text | Paragraph | Text |
+| enable | Text | Paragraph | Text |
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="json">
+
+```json
+    {
+    "name": "BTCUSDT"
+    "asset": "BTC"
+    "base_asset": "USDT"
+    "taker_fee": "0.002"
+    "maker_fee": "0"
+    "tick_size": 2,
+    "step_size": 5,
+    "min_trade_quantity": "0.00001"
+    "max_trade_quantity": "9000"
+    "enable": false
+    }
+
+```
+
+</TabItem>
+</Tabs>
+
+
