@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkraastin_api=self.webpackChunkraastin_api||[]).push([[7527],{929:a=>{a.exports=JSON.parse('{"permalink":"/api/blog/tags/docusaurus","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
