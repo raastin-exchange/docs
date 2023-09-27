@@ -70,6 +70,9 @@ const config = {
             position: 'right',
             label: 'مستندات',
           },
+          {
+            type: 'docsVersionDropdown',
+          }
         ],
       },
 

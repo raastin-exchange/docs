@@ -1,0 +1,111 @@
+---
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# دریافت و ساخت کیف پول
+
+
+
+
+
+<div style={{direction: 'ltr'}}>
+
+    HTTP Request https://api.raastin.com
+
+</div>
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/apiwithdraw
+
+</div>
+
+:::info توجه
+
+برای دریافت آدرس کیف پول و یا ساخت کیف پول جدید از این api استفاده کنید. در این api با مشخص کردن مقادیر coin و network در کوپری پارام در صورت وجود کیف پول آدرس آن برگردانده میشود و در صورت عدم وجود کیف پول ساخته شده و آدرس کیف ساخته شده برگردانده می‌شود.
+
+
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'Table', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+
+| نام پارامتر | نوع    | اجباری | توضیح              | نمونه |
+|-------------|--------|--------|--------------------|-------|
+| coin        | String | True   | ارزدیجتال مورد نظر | null  |
+| network     | String | True   | شبکه انتقال        | null  |
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+| نام پارامتر | نوع    | توضیحات      | نمونه                                        |
+|-------------|--------|--------------|----------------------------------------------|
+| address     | String | آدرس کیف پول | "0xd0d72802b786c45a9ccfcd7f52ac9d58b96e275f" |
+
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
+<TabItem value="json">
+
+
+```mdx-code-block
+<Tabs
+defaultValue="request"
+values={[
+{label: 'Request', value: 'request'},
+{label: 'Response', value: 'response'},
+]}>
+<TabItem value="request">
+```
+
+```json
+{
+    "coin": "USDT",
+    "network": "BTC"
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+    "address": "0xd0d72802b786c45a9ccfcd7f52ac9d58b96e275f"
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+</Tabs>

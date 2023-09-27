@@ -1,0 +1,139 @@
+---
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# تاریخچه واریز رمز ارز
+
+
+
+
+<div style={{direction: 'ltr'}}>
+
+    HTTP Request https://api.raastin.com
+
+</div>
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/deposit/list
+
+</div>
+
+:::info توجه
+
+برای مشاهده تاریخچه واریزهای خود از این api استفاده کنید.
+
+
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'Table', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+
+| نام پارامتر | نوع    | اجباری | توضیح               | نمونه |
+|-------------|--------|--------|---------------------|-------|
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+| نام پارامتر | نوع   | توضیحات | نمونه |
+|-------------|-------|---------|-------|
+| count       | null  | null    | 1     |
+| next        | null  | null    | null  |
+| previous    | null  | null    | null  |
+| results     | Array | null    | null  |
+
+results:
+
+| نام پارامتر   | نوع     | توضیحات | نمونه                              |
+|---------------|---------|---------|------------------------------------|
+| id            | Integer | null    | 620881                             |
+| created       | String  | null    | "2022-04-27T17:03:57.002570+04:30" |
+| symbol        | String  | null    | "BTCIRT"                           |
+| amount        | String  | null    | "100.00000"                        |
+| filled_amount | String  | null    | "0.00000"                          |
+| price         | String  | null    | "100000"                           |
+| filled_price  | String  | null    | null                               |
+| side          | String  | null    | buy                                |
+| fill_type     | String  | null    | "limit"                            |
+| status        | String  | null    | "new"                              |
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
+<TabItem value="json">
+
+
+```mdx-code-block
+<Tabs
+defaultValue="request"
+values={[
+{label: 'Request', value: 'request'},
+{label: 'Response', value: 'response'},
+]}>
+<TabItem value="request">
+```
+
+```json
+{
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 620597,
+            "created": "2022-04-27T16:06:29.953660+04:30",
+            "symbol": "BTCIRT",
+            "amount": "100.00000",
+            "filled_amount": "0.00000",
+            "price": "100000",
+            "filled_price": null,
+            "side": "buy",
+            "fill_type": "limit",
+            "status": "new"
+        }
+    ]
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+</Tabs>

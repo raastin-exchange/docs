@@ -1,0 +1,123 @@
+---
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# دریافت مقادیر آزاد هر کیف پول
+
+
+<div style={{direction: 'ltr'}}>
+
+    HTTP Request https://api.raastin.com
+
+</div>
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/wallet/balance
+
+</div>
+
+:::info توجه
+
+برای دریافت لیست کیف پول ها و مقادیر آزاد هر کدام میتوانید از این api استفاده کنید.
+
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'Table', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+
+| نام پارامتر | نوع    | اجباری | توضیح              | نمونه |
+|-------------|--------|--------|--------------------|-------|
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+| نام پارامتر | نوع   | توضیحات     |
+|-------------|-------|-------------|
+| wallet      | Array | کیف‌های پول |
+
+wallet:
+
+| نام پارامتر | نوع    | توضیحات    | نمونه    |
+|-------------|--------|------------|----------|
+| asset       | String | ارزدیجیتال | "USDT"   |
+| free        | String | مقدار آزاد | "100000" |
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
+<TabItem value="json">
+
+
+```mdx-code-block
+<Tabs
+defaultValue="request"
+values={[
+{label: 'Request', value: 'request'},
+{label: 'Response', value: 'response'},
+]}>
+<TabItem value="request">
+```
+
+```json
+{
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+    "wallet": [
+        {
+            "asset": "USDT",
+            "free": "100000"
+        },
+        {
+            "asset": "BTC",
+            "free": "100000"
+        },
+        {
+            "asset": "IRT",
+            "free": "100000"
+        }
+    ]
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+</Tabs>
