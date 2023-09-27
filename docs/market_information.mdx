@@ -1,0 +1,125 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Json from "../src/components/Json";
+
+# اطلاعات بازارهای راستین
+
+<div style={{direction: 'ltr'}}>
+
+    HTTP Request https://api.raastin.com
+
+</div>
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/market/symbols/
+
+</div>
+
+:::info توجه
+
+اطلاعات  درخواست را به صورت query param بفرستید.
+
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'Table', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+
+| نام پارامتر | نوع    | اجباری | توضیح            | نمونه |
+|-------------|--------|--------|------------------|-------|
+| base_asset  | String | True   | ارز پایه         | USDT  |
+| asset       | String | True   | ارز معامله شونده | BTC   |
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+| نام پارامتر        | نوع     | توضیحات                                                                 | نمونه     |
+|--------------------|---------|-------------------------------------------------------------------------|-----------|
+| name               | String  | نام بازار                                                               | "BTCUSDT" |
+| asset              | String  | ارز معامله شده                                                          | "BTC"     |
+| base_asset         | String  | ارز پایه                                                                | "USDT"    |
+| taker_fee          | String  | کارمزد معامله ای که بر اساس ثبت سفارش جدید روی تابلوی معاملات انجام شود | "0.002"   |
+| maker_fee          | String  | کارمزد معامله ای که بر اساس انتخاب از سفارشات روی تابلو انجام شود       | "0"       |
+| tick_size          | Integer | Text                                                                    | 2         |
+| step_size          | Integer | Text                                                                    | 5         |
+| min_trade_quantity | String  | مقدار کمینه مجاز برای معامله                                            | "0.00001" |
+| max_trade_quantity | String  | مقدار بیشینه ماز برای معامله                                            | "9000"    |
+| enable             | Boolean | فعال بودن بازار                                                         | false     |
+
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
+<TabItem value="json">
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+    {label: 'Request', value: 'request'},
+    {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+```json
+{
+    "base_asset": "USDT",
+    "asset": "BTC"
+}
+```
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+    "name": "BTCUSDT"
+    "asset": "BTC"
+    "base_asset": "USDT"
+    "taker_fee": "0.002"
+    "maker_fee": "0"
+    "tick_size": 2,
+    "step_size": 5,
+    "min_trade_quantity": "0.00001"
+    "max_trade_quantity": "9000"
+    "enable": false
+}
+
+```
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+</Tabs>
+
+
