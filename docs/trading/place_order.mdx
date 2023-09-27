@@ -1,0 +1,145 @@
+---
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Json from "../../src/components/Json";
+
+# ثبت سفارش جدید
+
+
+
+<div style={{direction: 'ltr'}}>
+
+    HTTP Request https://api.raastin.com
+
+</div>
+
+<div style={{textAlign: 'left'}}>
+
+    POST /api/v1/market/orders
+
+</div>
+
+:::info توجه
+
+برای ثبت سفارش معامله در بازار راستین از این api استفاده کنید. توجه به این نکته ضروری است که ثبت سفارش الزاما به معنی انجام معامله نیست. با درخواست مشاهده وضعیت سفارش می توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این api لازم است تا در قسمت header توکن خود را ارسال کنید.
+
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'Table', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+
+| نام پارامتر | نوع    | اجباری      | توضیح            | نمونه |
+|-------------|--------|-------------|------------------|-------|
+| symbol      | String | True        | بازار            | null  |
+| amount      | String | True        | مقدار سفارش      | null  |
+| price       | String | True        | 	قیمت سفارش      | null  |
+| side        | String | Conditional | نوع سفارش        | null  |
+| fill_type   | String | Conditional | نحوه اجرای سفارش | null  |
+| market      | String | Conditional | null             | null  |
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+| نام پارامتر   | نوع     | توضیحات | نمونه                              |
+|---------------|---------|---------|------------------------------------|
+| id            | Integer | null    | 620881                             |
+| created       | String  | null    | "2022-04-27T17:03:57.002570+04:30" |
+| symbol        | String  | null    | "BTCIRT"                           |
+| amount        | String  | null    | "100.00000"                        |
+| filled_amount | String  | null    | "0.00000"                          |
+| price         | String  | null    | "100000"                           |
+| filled_price  | String  | null    | null                               |
+| side          | String  | null    | buy                                |
+| fill_type     | String  | null    | "limit"                            |
+| status        | String  | null    | "new"                              |
+
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
+<TabItem value="json">
+
+
+```mdx-code-block
+<Tabs
+defaultValue="request"
+values={[
+    {label: 'Request', value: 'request'},
+    {label: 'Response', value: 'response'},
+]}>
+<TabItem value="request">
+```
+
+```json
+{
+    "symbol": "",
+    "amount": "",
+    "price": "",
+    "side": "",
+    "fill_type": "",
+    "market": ""
+}
+```
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+    "id": 620881,
+    "created": "2022-04-27T17:03:57.002570+04:30",
+    "symbol": "BTCIRT",
+    "amount": "100.00000",
+    "filled_amount": "0.00000",
+    "price": "100000",
+    "filled_price": null,
+    "side": "buy",
+    "fill_type": "limit",
+    "status": "new"
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+</Tabs>
+:::caution نکات و ملاحظات
+
+<ul>
+    <li>واحد قیمت در بازار های ریالی به ریال است.</li>
+    <li>واحد قیمت در بازارهای تتری نیز تتر میباشد.</li>
+    <li>واحد پارامتر amount بر اساس رمز ارز مبدا است.
+    </li>
+</ul>
+:::

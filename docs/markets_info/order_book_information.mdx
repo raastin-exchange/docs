@@ -1,0 +1,139 @@
+---
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Json from "../../src/components/Json";
+
+# لیست سفارش‌ها:اردر بوک
+
+
+<div style={{direction: 'ltr'}}>
+
+    HTTP Request https://api.raastin.com
+
+</div>
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/market/depth/<str:symbol>/
+
+</div>
+
+:::info توجه
+
+اطلاعات  درخواست را به صورت query param بفرستید.
+
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'Table', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+| نام پارامتر | نوع   | توضیحات       |
+|-------------|-------|---------------|
+| last_trade  | Array | اخرین معامله  |
+| bids        | Array | اردر های خرید |
+| asks        | Array | اردرهای فروش  |
+
+last_trade:
+
+| نام پارامتر | نوع    | توضیحات    | نمونه        |
+|-------------|--------|------------|--------------|
+| amount      | String | حجم سفارش  | "0.00049"    |
+| price       | String | قیمت سفارش | "1104354177" |
+| total       | String | ارزش سفارش | "541133"     |
+
+bids & asks:
+
+| نام پارامتر | نوع    | توضیحات | نمونه      |
+|-------------|--------|---------|------------|
+| price       | String | null    | "100000"   |
+| amount      | String | null    | "10.00000" |
+| depth       | String | null    | "2"        |
+| total       | String | null    | "1000000"  |
+
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
+<TabItem value="json">
+
+
+```mdx-code-block
+<Tabs
+defaultValue="request"
+values={[
+    {label: 'Request', value: 'request'},
+    {label: 'Response', value: 'response'},
+]}>
+<TabItem value="request">
+```
+
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+    "last_trade": {
+        "amount": "0.00049",
+        "price": "1104354177",
+        "total": "541133",
+    },
+    "bids": [
+        {
+            "price": "100000",
+            "amount": "10.00000",
+            "depth": "2",
+            "total": "1000000"
+        },
+    ],
+    "asks": [
+        {
+            "price": "1112952204",
+            "amount": "0.01517",
+            "depth": "33",
+            "total": "16883484"
+        },
+    ]
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+</Tabs>
+
+

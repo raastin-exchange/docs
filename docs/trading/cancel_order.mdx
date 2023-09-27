@@ -1,0 +1,112 @@
+---
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Json from "../../src/components/Json";
+
+# لغو سفارش
+
+
+
+
+<div style={{direction: 'ltr'}}>
+
+    HTTP Request https://api.raastin.com
+
+</div>
+
+<div style={{textAlign: 'left'}}>
+
+    POST /v1/market/orders/cancel
+
+</div>
+
+:::info توجه
+
+برای ثبت سفارش معامله در بازار راستین از این api استفاده کنید. توجه به این نکته ضروری است که ثبت سفارش الزاما به معنی انجام معامله نیست. با درخواست مشاهده وضعیت سفارش می توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این api لازم است تا در قسمت header توکن خود را ارسال کنید.
+
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'Table', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+
+| نام پارامتر | نوع     | اجباری | توضیح        | نمونه |
+|-------------|---------|--------|--------------|-------|
+| id          | Integer | True   | شناسه سفارش	 | 1054  |
+
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+| نام پارامتر | نوع    | توضیحات | نمونه                              |
+|-------------|--------|---------|------------------------------------|
+| id          | String | null    | "620597"                           |
+| canceled_at | String | null    | "2022-04-27 12:31:49.827768+00:00" |
+
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
+<TabItem value="json">
+
+
+```mdx-code-block
+<Tabs
+defaultValue="request"
+values={[
+    {label: 'Request', value: 'request'},
+    {label: 'Response', value: 'response'},
+]}>
+<TabItem value="request">
+```
+
+```json
+{
+    "id": "1054",
+}
+```
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+    "id": "620597",
+    "canceled_at": "2022-04-27 12:31:49.827768+00:00"
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+</Tabs>

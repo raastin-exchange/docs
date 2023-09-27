@@ -1,0 +1,119 @@
+---
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Json from "../../src/components/Json";
+
+#   اطلاعات یک بازار خاص
+
+
+<div style={{direction: 'ltr'}}>
+
+    HTTP Request https://api.raastin.com
+
+</div>
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/market/symbols/symbols/<str:name>/
+
+</div>
+
+:::info توجه
+نام ارزدیجیتال مورد نظر را به صورت url param بفرستید.
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'Table', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+| نام پارامتر    | نوع     | توضیحات                      | نمونه     |
+|----------------|---------|------------------------------|-----------|
+| name           | String  | نام بازار                    | "USDTIRT" |
+| asset          | String  | ارز معامله شده               | "USDT"    |
+| base_asset     | String  | ارز پایه                     | "IRT"     |
+| enable         | Boolean | فعال                         | true      |
+| price          | String  | قیمت                         | null      |
+| change         | String  | تغییرات قیمت در ۲۴ ساعت      | null      |
+| change_percent | String  | تغییرات درصد قیمت در ۲۴ ساعت | null      |
+| high           | String  | بیشینه قیمت در ۲۴ ساعت       | null      |
+| low            | String  | کمینه قیمت در ۲۴ ساعت        | null      |
+| volume         | Boolean | حجم معاملات در ۲۴ ساعت       | null      |
+| base_volume    | Boolean | حجم                          | null      |
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
+<TabItem value="json">
+
+
+```mdx-code-block
+<Tabs
+defaultValue="request"
+values={[
+    {label: 'Request', value: 'request'},
+    {label: 'Response', value: 'response'},
+]}>
+<TabItem value="request">
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+    "name": "USDTIRT",
+    "asset": "USDT",
+    "base_asset": "IRT",
+    "enable": true,
+    "price": null,
+    "change": null,
+    "change_percent": null,
+    "high": null,
+    "low": null,
+    "volume": null,
+    "base_volume": null
+}
+
+```
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+</Tabs>
+
+
+
+
+

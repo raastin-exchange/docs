@@ -1,0 +1,177 @@
+---
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Json from "../../src/components/Json";
+
+# لیست سفارش ها
+
+
+
+
+<div style={{direction: 'ltr'}}>
+
+    HTTP Request https://api.raastin.com
+
+</div>
+
+:::tip توجه
+
+برای ثبت سفارش معامله در بازار راستین از این api استفاده کنید. توجه به این نکته ضروری است که ثبت سفارش الزاما به معنی انجام معامله نیست. با درخواست مشاهده وضعیت سفارش می توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این api لازم است تا در قسمت header توکن خود را ارسال کنید.
+
+:::
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/market/orders
+
+</div>
+
+:::info توضیح
+
+برای دریافت لیست همه سفارش ها میتوانید از این api استفاده کنید.
+:::
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/market/orders/<id:str>
+
+</div>
+
+:::info توضیح
+
+برای دریافت اطلاعات مربوط به یک سفارش کافیست در انتهای ادرس api مربوط به لیست سفارشات id سفارش مورد نظر را قرار دهید.
+
+id مورد نظر را به صورت url param بفرستید.
+:::
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/market/orders/?symbol=&status=
+
+</div>
+
+:::info توضیح
+در این api امکان فیلتر کردن بر اساس وضعیت سفارش و بازار وجود دارد.
+
+اطلاعات  درخواست را به صورت query param بفرستید.
+
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="json"
+    values={[
+        {label: 'Table', value: 'table'},
+        {label: 'JSON', value: 'json'},
+    ]}>
+<TabItem value="table">
+```
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+
+| نام پارامتر | نوع    | اجباری | توضیح               | نمونه |
+|-------------|--------|--------|---------------------|-------|
+| symbol      | String | False  | ارزدیجیتال مورد نظر | null  |
+| status      | String | False  | وضعیت سفارش         | null  |
+
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+| نام پارامتر | نوع   | توضیحات | نمونه |
+|-------------|-------|---------|-------|
+| count       | null  | null    | 1     |
+| next        | null  | null    | null  |
+| previous    | null  | null    | null  |
+| results     | Array | null    | null  |
+
+results:
+
+| نام پارامتر   | نوع     | توضیحات | نمونه                              |
+|---------------|---------|---------|------------------------------------|
+| id            | Integer | null    | 620881                             |
+| created       | String  | null    | "2022-04-27T17:03:57.002570+04:30" |
+| symbol        | String  | null    | "BTCIRT"                           |
+| amount        | String  | null    | "100.00000"                        |
+| filled_amount | String  | null    | "0.00000"                          |
+| price         | String  | null    | "100000"                           |
+| filled_price  | String  | null    | null                               |
+| side          | String  | null    | buy                                |
+| fill_type     | String  | null    | "limit"                            |
+| status        | String  | null    | "new"                              |
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+
+<TabItem value="json">
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'Request', value: 'request'},
+        {label: 'Response', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+```json
+{
+    "symbol": "",
+    "status": "",
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+
+```json
+[
+    {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 620597,
+                "created": "2022-04-27T16:06:29.953660+04:30",
+                "symbol": "BTCIRT",
+                "amount": "100.00000",
+                "filled_amount": "0.00000",
+                "price": "100000",
+                "filled_price": null,
+                "side": "buy",
+                "fill_type": "limit",
+                "status": "new"
+            }
+        ]
+    },
+]
+```
+
+</TabItem>
+
+</Tabs>
+
+</TabItem>
+</Tabs>
+
