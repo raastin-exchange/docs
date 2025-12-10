@@ -13,10 +13,10 @@ sidebar_label: محدودیت‌های API
 
 ## محدودیت‌های درخواست
 
-| نوع محدودیت | حداکثر درخواست | بازه زمانی | توضیح |
-|-------------|----------------|------------|-------|
-| API Burst | 60 | دقیقه | حداکثر تعداد درخواست در هر دقیقه |
-| API Sustained | 86,400 | روز | حداکثر تعداد درخواست روزانه (فقط برای API Token) |
+|  حداکثر درخواست | بازه زمانی | توضیح |
+|----------------|------------|-------|
+| 60 | دقیقه | حداکثر تعداد درخواست در هر دقیقه |
+| 86,400 | روز | حداکثر تعداد درخواست روزانه  |
 
 ## پاسخ هنگام رسیدن به محدودیت
 
@@ -28,10 +28,6 @@ sidebar_label: محدودیت‌های API
 }
 ```
 
-## استثناها
-
-- **توکن‌های ویژه**: برخی توکن‌های API با دسترسی ویژه از محدودیت‌ها معاف هستند
-- **API‌های عمومی**: برخی endpoint‌ها مانند `/api/v1/market/symbols` محدودیت کمتری دارند
 
 :::tip نکات مهم
 
@@ -40,7 +36,6 @@ sidebar_label: محدودیت‌های API
 1. **استفاده از کش**: داده‌های تغییرنیافته را در سمت کلاینت کش کنید
 2. **Batch کردن درخواست‌ها**: از endpoint‌های دسته‌ای (bulk) استفاده کنید
 3. **پیاده‌سازی Exponential Backoff**: در صورت دریافت خطای 429، با تاخیر نمایی درخواست را تکرار کنید
-4. **استفاده از WebSocket**: برای داده‌های real-time به جای polling از WebSocket استفاده کنید
 
 ### مثال پیاده‌سازی Retry با Exponential Backoff (Python):
 
@@ -60,26 +55,6 @@ def make_request_with_retry(url, headers, max_retries=3):
         return response
 
     raise Exception("Max retries exceeded")
-```
-
-### مثال پیاده‌سازی Retry با Exponential Backoff (JavaScript):
-
-```javascript
-async function makeRequestWithRetry(url, headers, maxRetries = 3) {
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-        const response = await fetch(url, { headers });
-
-        if (response.status === 429) {
-            const waitTime = Math.pow(2, attempt) * 1000; // 1, 2, 4 seconds
-            await new Promise(resolve => setTimeout(resolve, waitTime));
-            continue;
-        }
-
-        return response;
-    }
-
-    throw new Error("Max retries exceeded");
-}
 ```
 
 :::
