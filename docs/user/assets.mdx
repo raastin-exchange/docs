@@ -1,0 +1,258 @@
+---
+sidebar_position: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# دارایی‌ها و ارزها
+
+## لیست دارایی‌ها
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/assets
+
+</div>
+
+:::info توضیح
+
+این API برای دریافت لیست تمام ارزهای دیجیتال و فیات قابل استفاده در راستین استفاده می‌شود. این endpoint اطلاعات کاملی درباره هر ارز شامل موجودی، قیمت، امکان واریز و برداشت ارائه می‌دهد.
+
+برای دریافت اطلاعات موجودی، احراز هویت الزامی است. بدون احراز هویت، فقط اطلاعات عمومی ارزها برگردانده می‌شود.
+
+:::
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request1"
+    values={[
+        {label: 'درخواست بدون Auth', value: 'request1'},
+        {label: 'درخواست با Auth', value: 'request2'},
+        {label: 'پاسخ بدون Auth', value: 'response1'},
+        {label: 'پاسخ با Auth', value: 'response2'},
+    ]}>
+<TabItem value="request1">
+```
+
+**درخواست بدون احراز هویت:**
+```bash
+GET /api/v1/assets
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="request2">
+```
+
+**درخواست با احراز هویت:**
+```bash
+GET /api/v1/assets
+Authorization: Token YOUR_TOKEN
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response1">
+```
+
+**پاسخ بدون احراز هویت:**
+```json
+[
+    {
+        "symbol": "BTC",
+        "name": "بیت کوین",
+        "name_en": "Bitcoin",
+        "can_deposit": true,
+        "can_withdraw": true,
+        "precision": 8,
+        "icon": "https://raastin.com/media/assets/btc.png",
+        "color": "#F7931A",
+        "enable": true,
+        "trend": false,
+        "market_irt_enable": true,
+        "trade_enable": true,
+        "step_size": 8
+    },
+    {
+        "symbol": "ETH",
+        "name": "اتریوم",
+        "name_en": "Ethereum",
+        "can_deposit": true,
+        "can_withdraw": true,
+        "precision": 8,
+        "icon": "https://raastin.com/media/assets/eth.png",
+        "color": "#627EEA",
+        "enable": true,
+        "trend": true,
+        "market_irt_enable": true,
+        "trade_enable": true,
+        "step_size": 8
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response2">
+```
+
+**پاسخ با احراز هویت (شامل موجودی):**
+```json
+[
+    {
+        "symbol": "BTC",
+        "name": "بیت کوین",
+        "name_en": "Bitcoin",
+        "balance": "0.15",
+        "free": "0.1",
+        "balance_irt": "5250000000",
+        "balance_usdt": "1500",
+        "free_irt": "3500000000",
+        "can_deposit": true,
+        "can_withdraw": true,
+        "precision": 8,
+        "icon": "https://raastin.com/media/assets/btc.png",
+        "color": "#F7931A",
+        "enable": true,
+        "trend": false,
+        "market_irt_enable": true,
+        "trade_enable": true,
+        "pin_to_top": false,
+        "step_size": 8
+    },
+    {
+        "symbol": "ETH",
+        "name": "اتریوم",
+        "name_en": "Ethereum",
+        "balance": "2.5",
+        "free": "2",
+        "balance_irt": "300000000",
+        "balance_usdt": "85.71",
+        "free_irt": "240000000",
+        "can_deposit": true,
+        "can_withdraw": true,
+        "precision": 8,
+        "icon": "https://raastin.com/media/assets/eth.png",
+        "color": "#627EEA",
+        "enable": true,
+        "trend": true,
+        "market_irt_enable": true,
+        "trade_enable": true,
+        "pin_to_top": false,
+        "step_size": 8
+    }
+]
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## جزئیات یک دارایی
+
+<div style={{textAlign: 'left'}}>
+
+    GET /api/v1/assets/&#123;symbol&#125;
+
+</div>
+
+:::info توضیح
+
+این API برای دریافت اطلاعات جزئی یک ارز خاص استفاده می‌شود.
+
+**پارامتر مسیر:**
+- `symbol`: نماد ارز (مثال: BTC، ETH، USDT)
+
+:::
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'درخواست', value: 'request'},
+        {label: 'پاسخ', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+```bash
+GET /api/v1/assets/BTC
+Authorization: Token YOUR_TOKEN
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+```json
+{
+    "symbol": "BTC",
+    "name": "بیت کوین",
+    "name_en": "Bitcoin",
+    "balance": "0.15",
+    "free": "0.1",
+    "balance_irt": "5250000000",
+    "balance_usdt": "1500",
+    "free_irt": "3500000000",
+    "can_deposit": true,
+    "can_withdraw": true,
+    "precision": 8,
+    "icon": "https://raastin.com/media/assets/btc.png",
+    "color": "#F7931A",
+    "enable": true,
+    "trend": false,
+    "market_irt_enable": true,
+    "trade_enable": true,
+    "pin_to_top": false,
+    "step_size": 8
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+:::tip نکات مهم
+
+### تفاوت با `/api/v1/wallets`:
+
+**Assets API (`/api/v1/assets`):**
+- لیست همه ارزهای موجود در پلتفرم
+- حتی ارزهایی که کاربر موجودی ندارد نمایش داده می‌شود
+- شامل اطلاعات عمومی ارزها (trending، market availability)
+- برای نمایش لیست کامل ارزها مناسب است
+
+**Wallets API (`/api/v1/wallets`):**
+- فقط کیف پول‌های کاربر
+- معمولاً فقط ارزهایی که کاربر موجودی دارد
+- تمرکز بر اطلاعات مالی (balance، locked)
+- برای مدیریت دارایی‌های کاربر مناسب است
+
+### فیلدهای مهم:
+
+- **precision / step_size:** تعداد ارقام اعشار مجاز
+  - استفاده در محاسبات و نمایش
+  - مثلاً برای BTC: `0.12345678` (8 رقم اعشار)
+
+- **trend:** ارزهای پرطرفدار که در صفحه اصلی برجسته نمایش داده می‌شوند
+
+- **market_irt_enable:** آیا بازار ریالی (مثلاً BTCIRT) برای این ارز وجود دارد
+
+- **trade_enable:** آیا این ارز قابل معامله است
+  - false برای ارزهای در حال توسعه یا غیرفعال
+
+- **pin_to_top:** برای کاربران احراز هویت شده، ارزهایی که در بالای لیست شخصی نمایش داده می‌شوند
+
+:::
+
+:::caution نکته
+
+این API برای دریافت لیست ارزهاست. برای دریافت **قیمت لحظه‌ای** ارزها از API بازارها (`/api/v1/market/symbols?stats=1`) استفاده کنید.
+
+:::

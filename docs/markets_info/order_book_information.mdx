@@ -5,134 +5,152 @@ sidebar_position: 3
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# لیست سفارش‌ها:اردر بوک
+# دفتر سفارش (Order Book / Depth)
 
+<div dir="ltr" style={{textAlign: 'left'}}>
 
-<div style={{direction: 'ltr'}}>
-
-    HTTP Request https://api.raastin.com
-
-</div>
-
-<div style={{textAlign: 'left'}}>
-
-    GET /api/v1/market/depth/<str:symbol>/
+    GET /api/v1/market/depth/&#123;symbol&#125;
 
 </div>
 
-:::info توجه
+:::info توضیح
 
-اطلاعات  درخواست را به صورت query param بفرستید.
+این API برای دریافت دفتر سفارش (Order Book) یک نماد استفاده می‌شود. دفتر سفارش شامل لیست سفارش‌های خرید (bids) و فروش (asks) موجود در بازار و همچنین آخرین معامله انجام شده است.
+
+این API عمومی است و نیازی به احراز هویت ندارد.
+
+**پارامتر مسیر:**
+- `symbol`: نماد بازار (مثال: BTCIRT، ETHUSDT)
 
 :::
 
-```mdx-code-block
-<Tabs
-    defaultValue="json"
-    values={[
-        {label: 'Table', value: 'table'},
-        {label: 'JSON', value: 'json'},
-    ]}>
-<TabItem value="table">
-```
+## ساختار Response
 
+| نام پارامتر | نوع    | توضیحات                                     |
+|-------------|--------|---------------------------------------------|
+| last_trade  | Object | اطلاعات آخرین معامله انجام شده             |
+| bids        | Array  | لیست سفارش‌های خرید (مرتب شده از بالا به پایین) |
+| asks        | Array  | لیست سفارش‌های فروش (مرتب شده از پایین به بالا) |
 
-```mdx-code-block
-<Tabs
-    defaultValue="request"
-    values={[
-        {label: 'Request', value: 'request'},
-        {label: 'Response', value: 'response'},
-    ]}>
-<TabItem value="request">
-```
+**ساختار last_trade:**
 
+| نام پارامتر | نوع    | توضیحات                                | مثال         |
+|-------------|--------|----------------------------------------|--------------|
+| amount      | String | مقدار معامله                           | "0.00049"    |
+| price       | String | قیمت معامله                            | "3500000000" |
+| total       | String | ارزش کل معامله (amount × price)       | "1715000"    |
 
-```mdx-code-block
-</TabItem>
-<TabItem value="response">
-```
+**ساختار bids (سفارش‌های خرید) & asks (سفارش‌های فروش):**
 
-| نام پارامتر | نوع   | توضیحات       |
-|-------------|-------|---------------|
-| last_trade  | Array | اخرین معامله  |
-| bids        | Array | اردر های خرید |
-| asks        | Array | اردرهای فروش  |
-
-last_trade:
-
-| نام پارامتر | نوع    | توضیحات    | نمونه        |
-|-------------|--------|------------|--------------|
-| amount      | String | حجم سفارش  | "0.00049"    |
-| price       | String | قیمت سفارش | "1104354177" |
-| total       | String | ارزش سفارش | "541133"     |
-
-bids & asks:
-
-| نام پارامتر | نوع    | توضیحات | نمونه      |
-|-------------|--------|---------|------------|
-| price       | String | null    | "100000"   |
-| amount      | String | null    | "10.00000" |
-| depth       | String | null    | "2"        |
-| total       | String | null    | "1000000"  |
-
-
-</TabItem>
-
-</Tabs>
-
-</TabItem>
-
-<TabItem value="json">
-
+| نام پارامتر | نوع    | توضیحات                                           | مثال         |
+|-------------|--------|---------------------------------------------------|--------------|
+| price       | String | قیمت                                              | "3499000000" |
+| amount      | String | مقدار کل در این قیمت                             | "0.15"       |
+| depth       | Integer| تعداد سفارش‌ها در این قیمت                       | 5            |
+| total       | String | ارزش کل سفارش‌ها (amount × price)                | "524850000"  |
 
 ```mdx-code-block
 <Tabs
-defaultValue="request"
+defaultValue="response"
 values={[
-    {label: 'Request', value: 'request'},
-    {label: 'Response', value: 'response'},
+    {label: 'پاسخ', value: 'response'},
 ]}>
-<TabItem value="request">
-```
-
-
-
-```mdx-code-block
-</TabItem>
 <TabItem value="response">
+```
 
 ```json
 {
     "last_trade": {
-        "amount": "0.00049",
-        "price": "1104354177",
-        "total": "541133",
+        "amount": "0.001",
+        "price": "3500000000",
+        "total": "3500000"
     },
     "bids": [
         {
-            "price": "100000",
-            "amount": "10.00000",
-            "depth": "2",
-            "total": "1000000"
+            "price": "3499000000",
+            "amount": "0.15",
+            "depth": 5,
+            "total": "524850000"
         },
+        {
+            "price": "3498000000",
+            "amount": "0.25",
+            "depth": 8,
+            "total": "874500000"
+        },
+        {
+            "price": "3497000000",
+            "amount": "0.5",
+            "depth": 12,
+            "total": "1748500000"
+        }
     ],
     "asks": [
         {
-            "price": "1112952204",
-            "amount": "0.01517",
-            "depth": "33",
-            "total": "16883484"
+            "price": "3501000000",
+            "amount": "0.12",
+            "depth": 3,
+            "total": "420120000"
         },
+        {
+            "price": "3502000000",
+            "amount": "0.3",
+            "depth": 7,
+            "total": "1050600000"
+        },
+        {
+            "price": "3503000000",
+            "amount": "0.45",
+            "depth": 10,
+            "total": "1576350000"
+        }
     ]
 }
 ```
 
-</TabItem>
-
-</Tabs>
-
+```mdx-code-block
 </TabItem>
 </Tabs>
+```
 
+:::tip نکات مهم
+
+### درک دفتر سفارش:
+
+**Bids (سفارش‌های خرید):**
+- مرتب شده از بالاترین قیمت به پایین‌ترین
+- هر ردیف نشان‌دهنده قیمتی است که خریداران حاضرند بپردازند
+- بالاترین قیمت bid = بهترین قیمت خرید
+
+**Asks (سفارش‌های فروش):**
+- مرتب شده از پایین‌ترین قیمت به بالاترین
+- هر ردیف نشان‌دهنده قیمتی است که فروشندگان می‌خواهند دریافت کنند
+- پایین‌ترین قیمت ask = بهترین قیمت فروش
+
+**Spread (اسپرد):**
+تفاوت بین پایین‌ترین ask و بالاترین bid را spread می‌گویند:
+```
+spread = پایین‌ترین ask - بالاترین bid
+```
+در مثال بالا: 3501000000 - 3499000000 = 2000000 ریال
+
+### فیلد depth:
+تعداد سفارش‌های جداگانه در آن سطح قیمت را نشان می‌دهد. مثلاً `depth: 5` یعنی 5 سفارش مختلف با آن قیمت وجود دارد که مجموع مقدارشان برابر `amount` است.
+
+### استفاده در معاملات:
+
+- **سفارش Market Buy:** با پایین‌ترین قیمت‌های asks match می‌شود
+- **سفارش Market Sell:** با بالاترین قیمت‌های bids match می‌شود
+- **سفارش Limit Buy:** اگر قیمت شما بیشتر یا مساوی پایین‌ترین ask باشد، بلافاصله match می‌شود
+- **سفارش Limit Sell:** اگر قیمت شما کمتر یا مساوی بالاترین bid باشد، بلافاصله match می‌شود
+
+:::
+
+:::caution نکته
+
+این API اطلاعات لحظه‌ای (snapshot) از دفتر سفارش را برمی‌گرداند. برای دریافت به‌روزرسانی‌های real-time، از WebSocket استفاده کنید.
+
+دفتر سفارش ممکن است در کسری از ثانیه تغییر کند، بنابراین برای معاملات خودکار توصیه می‌شود از WebSocket برای دریافت تغییرات لحظه‌ای استفاده شود.
+
+:::
 

@@ -7,13 +7,6 @@ import TabItem from '@theme/TabItem';
 
 # دریافت مقادیر آزاد هر کیف پول
 
-
-<div style={{direction: 'ltr'}}>
-
-    HTTP Request https://api.raastin.com
-
-</div>
-
 <div style={{textAlign: 'left'}}>
 
     GET /api/v1/wallet/balance
@@ -26,75 +19,33 @@ import TabItem from '@theme/TabItem';
 
 :::
 
-```mdx-code-block
-<Tabs
-    defaultValue="json"
-    values={[
-        {label: 'Table', value: 'table'},
-        {label: 'JSON', value: 'json'},
-    ]}>
-<TabItem value="table">
-```
-
-
-```mdx-code-block
-<Tabs
-    defaultValue="request"
-    values={[
-        {label: 'Request', value: 'request'},
-        {label: 'Response', value: 'response'},
-    ]}>
-<TabItem value="request">
-```
-
-
-| نام پارامتر | نوع    | اجباری | توضیح              | نمونه |
-|-------------|--------|--------|--------------------|-------|
-
-
-```mdx-code-block
-</TabItem>
-<TabItem value="response">
-```
+## ساختار Response
 
 | نام پارامتر | نوع   | توضیحات     |
 |-------------|-------|-------------|
 | wallet      | Array | کیف‌های پول |
 
-wallet:
+**ساختار wallet:**
 
 | نام پارامتر | نوع    | توضیحات    | نمونه    |
 |-------------|--------|------------|----------|
 | asset       | String | ارزدیجیتال | "USDT"   |
 | free        | String | مقدار آزاد | "100000" |
 
-</TabItem>
-
-</Tabs>
-
-</TabItem>
-
-<TabItem value="json">
-
-
 ```mdx-code-block
 <Tabs
 defaultValue="request"
 values={[
-{label: 'Request', value: 'request'},
-{label: 'Response', value: 'response'},
+{label: 'درخواست', value: 'request'},
+{label: 'پاسخ', value: 'response'},
 ]}>
 <TabItem value="request">
-```
-
-```json
-{
-}
 ```
 
 ```mdx-code-block
 </TabItem>
 <TabItem value="response">
+```
 
 ```json
 {
@@ -115,9 +66,7 @@ values={[
 }
 ```
 
-</TabItem>
-
-</Tabs>
-
+```mdx-code-block
 </TabItem>
 </Tabs>
+```

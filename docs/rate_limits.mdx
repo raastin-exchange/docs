@@ -1,0 +1,92 @@
+---
+sidebar_position: 3
+sidebar_label: محدودیت‌های API
+---
+
+# محدودیت‌های API (Rate Limits)
+
+:::info توضیح
+
+برای جلوگیری از سوءاستفاده و حفظ پایداری سرویس، محدودیت‌هایی بر روی تعداد درخواست‌ها اعمال شده است.
+
+:::
+
+## محدودیت‌های درخواست
+
+| نوع محدودیت | حداکثر درخواست | بازه زمانی | توضیح |
+|-------------|----------------|------------|-------|
+| API Burst | 60 | دقیقه | حداکثر تعداد درخواست در هر دقیقه |
+| API Sustained | 86,400 | روز | حداکثر تعداد درخواست روزانه (فقط برای API Token) |
+
+## پاسخ هنگام رسیدن به محدودیت
+
+زمانی که به سقف محدودیت برسید، سرور پاسخ زیر را با کد وضعیت `429 Too Many Requests` برمی‌گرداند:
+
+```json
+{
+    "detail": "تا {wait} ثانیه بعد قادر به ارسال درخواست نمی‌باشید."
+}
+```
+
+## استثناها
+
+- **توکن‌های ویژه**: برخی توکن‌های API با دسترسی ویژه از محدودیت‌ها معاف هستند
+- **API‌های عمومی**: برخی endpoint‌ها مانند `/api/v1/market/symbols` محدودیت کمتری دارند
+
+:::tip نکات مهم
+
+### بهترین شیوه‌ها برای مدیریت محدودیت‌ها:
+
+1. **استفاده از کش**: داده‌های تغییرنیافته را در سمت کلاینت کش کنید
+2. **Batch کردن درخواست‌ها**: از endpoint‌های دسته‌ای (bulk) استفاده کنید
+3. **پیاده‌سازی Exponential Backoff**: در صورت دریافت خطای 429، با تاخیر نمایی درخواست را تکرار کنید
+4. **استفاده از WebSocket**: برای داده‌های real-time به جای polling از WebSocket استفاده کنید
+
+### مثال پیاده‌سازی Retry با Exponential Backoff (Python):
+
+```python
+import time
+import requests
+
+def make_request_with_retry(url, headers, max_retries=3):
+    for attempt in range(max_retries):
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 429:
+            wait_time = 2 ** attempt  # 1, 2, 4 seconds
+            time.sleep(wait_time)
+            continue
+
+        return response
+
+    raise Exception("Max retries exceeded")
+```
+
+### مثال پیاده‌سازی Retry با Exponential Backoff (JavaScript):
+
+```javascript
+async function makeRequestWithRetry(url, headers, maxRetries = 3) {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        const response = await fetch(url, { headers });
+
+        if (response.status === 429) {
+            const waitTime = Math.pow(2, attempt) * 1000; // 1, 2, 4 seconds
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+            continue;
+        }
+
+        return response;
+    }
+
+    throw new Error("Max retries exceeded");
+}
+```
+
+:::
+
+:::caution هشدار
+
+- در صورت تلاش‌های مکرر برای bypass کردن محدودیت‌ها، حساب کاربری ممکن است موقتاً یا دائماً محدود شود
+- برای نیاز به محدودیت‌های بالاتر، با پشتیبانی تماس بگیرید
+
+:::

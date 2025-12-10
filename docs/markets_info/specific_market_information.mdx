@@ -8,111 +8,117 @@ import TabItem from '@theme/TabItem';
 #   اطلاعات یک بازار خاص
 
 
-<div style={{direction: 'ltr'}}>
+<div dir="ltr" style={{textAlign: 'left'}}>
 
-    HTTP Request https://api.raastin.com
-
-</div>
-
-<div style={{textAlign: 'left'}}>
-
-    GET /api/v1/market/symbols/symbols/<str:name>/
+    GET /api/v1/market/symbols/&#123;symbol&#125;
 
 </div>
 
-:::info توجه
-نام ارزدیجیتال مورد نظر را به صورت url param بفرستید.
+:::info توضیح
+
+این API برای دریافت اطلاعات یک بازار خاص به همراه آمار 24 ساعت گذشته استفاده می‌شود.
+
+**پارامتر مسیر:**
+- `symbol`: نماد بازار (مثال: BTCIRT، ETHUSDT، USDTIRT)
+
+این API عمومی است و نیازی به احراز هویت ندارد.
+
 :::
 
-```mdx-code-block
-<Tabs
-    defaultValue="json"
-    values={[
-        {label: 'Table', value: 'table'},
-        {label: 'JSON', value: 'json'},
-    ]}>
-<TabItem value="table">
-```
+## ساختار Response
 
-
-```mdx-code-block
-<Tabs
-    defaultValue="request"
-    values={[
-        {label: 'Request', value: 'request'},
-        {label: 'Response', value: 'response'},
-    ]}>
-<TabItem value="request">
-```
-
-
-
-```mdx-code-block
-</TabItem>
-<TabItem value="response">
-```
-| نام پارامتر    | نوع     | توضیحات                      | نمونه     |
-|----------------|---------|------------------------------|-----------|
-| name           | String  | نام بازار                    | "USDTIRT" |
-| asset          | String  | ارز معامله شده               | "USDT"    |
-| base_asset     | String  | ارز پایه                     | "IRT"     |
-| enable         | Boolean | فعال                         | true      |
-| price          | String  | قیمت                         | null      |
-| change         | String  | تغییرات قیمت در ۲۴ ساعت      | null      |
-| change_percent | String  | تغییرات درصد قیمت در ۲۴ ساعت | null      |
-| high           | String  | بیشینه قیمت در ۲۴ ساعت       | null      |
-| low            | String  | کمینه قیمت در ۲۴ ساعت        | null      |
-| volume         | Boolean | حجم معاملات در ۲۴ ساعت       | null      |
-| base_volume    | Boolean | حجم                          | null      |
-
-</TabItem>
-
-</Tabs>
-
-</TabItem>
-
-<TabItem value="json">
-
+| نام پارامتر    | نوع     | توضیحات                                           | نمونه          |
+|----------------|---------|--------------------------------------------------|----------------|
+| name           | String  | نام نماد بازار                                    | "BTCIRT"       |
+| asset          | String  | ارز معامله شده (ارز اول در جفت ارز)              | "BTC"          |
+| base_asset     | String  | ارز پایه (ارز دوم)                                | "IRT"          |
+| enable         | Boolean | وضعیت فعال/غیرفعال بودن بازار                     | true           |
+| price          | String  | آخرین قیمت معامله شده                             | "3500000000"   |
+| change         | String  | تغییرات قیمت در 24 ساعت گذشته (به واحد ارز پایه) | "50000000"     |
+| change_percent | String  | درصد تغییرات قیمت در 24 ساعت گذشته                | "1.45"         |
+| high           | String  | بالاترین قیمت در 24 ساعت گذشته                    | "3550000000"   |
+| low            | String  | پایین‌ترین قیمت در 24 ساعت گذشته                  | "3450000000"   |
+| volume         | String  | حجم معاملات در 24 ساعت (برحسب ارز معامله شده)    | "15.5"         |
+| base_volume    | String  | حجم معاملات در 24 ساعت (برحسب ارز پایه)           | "54250000000"  |
 
 ```mdx-code-block
 <Tabs
 defaultValue="request"
 values={[
-    {label: 'Request', value: 'request'},
-    {label: 'Response', value: 'response'},
+    {label: 'درخواست', value: 'request'},
+    {label: 'پاسخ', value: 'response'},
 ]}>
 <TabItem value="request">
 ```
-
 ```mdx-code-block
 </TabItem>
 <TabItem value="response">
 
 ```json
 {
-    "name": "USDTIRT",
-    "asset": "USDT",
+    "name": "BTCIRT",
+    "asset": "BTC",
     "base_asset": "IRT",
     "enable": true,
-    "price": null,
-    "change": null,
-    "change_percent": null,
-    "high": null,
-    "low": null,
-    "volume": null,
-    "base_volume": null
+    "price": "3500000000",
+    "change": "50000000",
+    "change_percent": "1.45",
+    "high": "3550000000",
+    "low": "3450000000",
+    "volume": "15.5",
+    "base_volume": "54250000000"
 }
-
 ```
 
+```mdx-code-block
 </TabItem>
 
 </Tabs>
+```
 
-</TabItem>
-</Tabs>
+:::tip نکات مهم
 
+### آمار 24 ساعته:
 
+تمام فیلدهای آماری (`price`، `change`، `high`، `low`، `volume`، `base_volume`) مربوط به 24 ساعت گذشته هستند.
 
+### تفسیر تغییرات:
+
+- **change > 0**: قیمت افزایش یافته (صعودی)
+- **change < 0**: قیمت کاهش یافته (نزولی)
+- **change_percent**: درصد تغییرات نسبت به 24 ساعت قبل
+
+**مثال محاسبه:**
+```
+قیمت فعلی: 3,500,000,000 ریال
+تغییرات: +50,000,000 ریال
+قیمت 24 ساعت قبل: 3,450,000,000 ریال
+درصد تغییرات: (50,000,000 / 3,450,000,000) × 100 = 1.45%
+```
+
+### حجم معاملات:
+
+- **volume**: حجم کل معاملات برحسب ارز معامله شده (asset)
+  - برای BTCIRT: برحسب BTC
+  - مثال: "15.5" یعنی 15.5 بیت‌کوین معامله شده
+
+- **base_volume**: حجم کل معاملات برحسب ارز پایه (base_asset)
+  - برای BTCIRT: برحسب ریال
+  - مثال: "54250000000" یعنی 54.25 میلیارد ریال معامله شده
+
+### مقایسه با endpoint کلی:
+
+- **این endpoint:** `/api/v1/market/symbols/{symbol}` - فقط یک بازار خاص
+- **Endpoint کلی:** `/api/v1/market/symbols?stats=1` - لیست همه بازارها با آمار
+
+برای نمایش لیست بازارها با آمار، از endpoint کلی استفاده کنید.
+
+:::
+
+:::caution نکته
+
+اگر بازاری معامله فعالی در 24 ساعت گذشته نداشته باشد، برخی از فیلدها (مانند `change`, `volume`) ممکن است `"0"` یا `null` باشند.
+
+:::
 
 

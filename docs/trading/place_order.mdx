@@ -1,19 +1,11 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # ثبت سفارش جدید
-
-
-
-<div style={{direction: 'ltr'}}>
-
-    HTTP Request https://api.raastin.com
-
-</div>
 
 <div style={{textAlign: 'left'}}>
 
@@ -23,123 +15,133 @@ import TabItem from '@theme/TabItem';
 
 :::info توجه
 
-برای ثبت سفارش معامله در بازار راستین از این api استفاده کنید. توجه به این نکته ضروری است که ثبت سفارش الزاما به معنی انجام معامله نیست. با درخواست مشاهده وضعیت سفارش می توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این api لازم است تا در قسمت header توکن خود را ارسال کنید.
+برای ثبت سفارش معامله در بازار راستین از این api استفاده کنید.با درخواست مشاهده وضعیت سفارش می توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این api لازم است تا در قسمت header توکن خود را ارسال کنید.
 
 :::
 
-```mdx-code-block
-<Tabs
-    defaultValue="json"
-    values={[
-        {label: 'Table', value: 'table'},
-        {label: 'JSON', value: 'json'},
-    ]}>
-<TabItem value="table">
-```
+## پارامترهای Request
 
+| نام پارامتر      | نوع    | اجباری      | توضیح                                                   |
+|------------------|--------|-------------|--------------------------------------------------------|
+| symbol           | String | ✓           | نماد بازار (مثال: BTCIRT، ETHUSDT)                     |
+| amount           | String | ✓           | مقدار سفارش (برحسب ارز معامله‌شونده)                   |
+| price            | String | شرطی        | قیمت سفارش (الزامی برای limit، اختیاری برای market)     |
+| side             | String | ✓           | نوع سفارش: `buy` یا `sell`                             |
+| fill_type        | String | ✓           | نوع اجرا: `limit`، `market`، `stop_loss`، `stop_loss_limit` |
+| market           | String |             | نوع بازار: `SPOT` یا `MARGIN` (پیش‌فرض: SPOT)          |
+| client_order_id  | String |             | شناسه اختصاصی سفارش توسط کاربر                         |
+| time_in_force    | String |             | زمان اعتبار: `GTC`، `IOC`، `FOK` (پیش‌فرض: GTC)        |
+| trigger_price    | String | شرطی        | قیمت تریگر (الزامی برای stop_loss)                      |
+| is_open_position | Boolean|             | آیا سفارش برای باز کردن پوزیشن است (فقط MARGIN)        |
 
 ```mdx-code-block
 <Tabs
     defaultValue="request"
     values={[
-        {label: 'Request', value: 'request'},
-        {label: 'Response', value: 'response'},
+        {label: 'درخواست', value: 'request'},
+        {label: 'پاسخ', value: 'response'},
     ]}>
 <TabItem value="request">
 ```
 
-
-| نام پارامتر | نوع    | اجباری      | توضیح            | نمونه |
-|-------------|--------|-------------|------------------|-------|
-| symbol      | String | True        | بازار            | null  |
-| amount      | String | True        | مقدار سفارش      | null  |
-| price       | String | True        | 	قیمت سفارش      | null  |
-| side        | String | Conditional | نوع سفارش        | null  |
-| fill_type   | String | Conditional | نحوه اجرای سفارش | null  |
-| market      | String | Conditional | null             | null  |
-
-
-```mdx-code-block
-</TabItem>
-<TabItem value="response">
-```
-| نام پارامتر   | نوع     | توضیحات | نمونه                              |
-|---------------|---------|---------|------------------------------------|
-| id            | Integer | null    | 620881                             |
-| created       | String  | null    | "2022-04-27T17:03:57.002570+04:30" |
-| symbol        | String  | null    | "BTCIRT"                           |
-| amount        | String  | null    | "100.00000"                        |
-| filled_amount | String  | null    | "0.00000"                          |
-| price         | String  | null    | "100000"                           |
-| filled_price  | String  | null    | null                               |
-| side          | String  | null    | buy                                |
-| fill_type     | String  | null    | "limit"                            |
-| status        | String  | null    | "new"                              |
-
-
-</TabItem>
-
-</Tabs>
-
-</TabItem>
-
-<TabItem value="json">
-
-
-```mdx-code-block
-<Tabs
-defaultValue="request"
-values={[
-    {label: 'Request', value: 'request'},
-    {label: 'Response', value: 'response'},
-]}>
-<TabItem value="request">
-```
-
+**مثال 1: سفارش خرید limit:**
 ```json
 {
-    "symbol": "",
-    "amount": "",
-    "price": "",
-    "side": "",
-    "fill_type": "",
-    "market": ""
+    "symbol": "BTCIRT",
+    "amount": "0.001",
+    "price": "3500000000",
+    "side": "buy",
+    "fill_type": "limit",
+    "market": "SPOT"
 }
 ```
 
+**مثال 2: سفارش فروش market:**
+```json
+{
+    "symbol": "ETHIRT",
+    "amount": "0.5",
+    "side": "sell",
+    "fill_type": "market"
+}
+```
+
+**مثال 3: سفارش stop_loss:**
+```json
+{
+    "symbol": "BTCIRT",
+    "amount": "0.002",
+    "side": "sell",
+    "fill_type": "stop_loss",
+    "trigger_price": "3450000000",
+    "client_order_id": "my-stop-loss-001"
+}
+```
 
 ```mdx-code-block
 </TabItem>
 <TabItem value="response">
+```
 
 ```json
 {
-    "id": 620881,
-    "created": "2022-04-27T17:03:57.002570+04:30",
+    "id": "1234567",
+    "client_order_id": "order-123",
+    "created": "2024-12-10T15:30:45.123456+03:30",
     "symbol": "BTCIRT",
-    "amount": "100.00000",
-    "filled_amount": "0.00000",
-    "price": "100000",
+    "amount": "0.001",
+    "filled_amount": "0",
+    "filled_percent": "0%",
+    "price": "3500000000",
     "filled_price": null,
     "side": "buy",
     "fill_type": "limit",
-    "status": "new"
+    "status": "NEW",
+    "market": "SPOT",
+    "trigger_price": null,
+    "time_in_force": "GTC",
+    "allow_cancel": true,
+    "is_oco": false,
+    "is_open_position": null,
+    "leverage": null,
+    "position_side": null,
+    "trades": []
 }
 ```
 
-</TabItem>
-
-</Tabs>
-
+```mdx-code-block
 </TabItem>
 </Tabs>
+```
 
-:::caution نکات و ملاحظات
+:::tip نکات مهم
 
-<ul>
-    <li>واحد قیمت در بازار های ریالی به ریال است.</li>
-    <li>واحد قیمت در بازارهای تتری نیز تتر میباشد.</li>
-    <li>واحد پارامتر amount بر اساس رمز ارز مبدا است.
-    </li>
-</ul>
+### انواع fill_type:
+- **limit**: سفارش با قیمت مشخص که در orderbook قرار می‌گیرد
+- **market**: سفارش فوری با بهترین قیمت موجود
+- **stop_loss**: سفارش فروش اتوماتیک زمانی که قیمت به trigger_price برسد
+- **stop_loss_limit**: ترکیب stop_loss و limit
+
+### انواع time_in_force:
+- **GTC** (Good Till Cancel): سفارش تا زمان لغو یا اجرا باقی می‌ماند (پیش‌فرض)
+- **IOC** (Immediate or Cancel): بلافاصله اجرا شود، مقدار باقیمانده لغو می‌شود
+- **FOK** (Fill or Kill): یا کاملاً اجرا شود یا کاملاً لغو شود
+
+### نکات:
+- **قیمت در بازارهای ریالی به ریال است** (مثلاً 3500000000 = 3.5 میلیارد ریال)
+- **قیمت در بازارهای تتری به تتر است** (مثلاً 95000.5 = 95 هزار تتر)
+- **واحد amount بر اساس ارز معامله‌شونده است** (برای BTCIRT، amount برحسب BTC است)
+- **برای سفارش market نیازی به price نیست** (با بهترین قیمت بازار اجرا می‌شود)
+- **برای stop_loss باید trigger_price مشخص شود**
+
+:::
+
+:::caution محدودیت‌ها
+
+- مقدار سفارش باید بین `min_trade_quantity` و `max_trade_quantity` بازار باشد
+- قیمت و مقدار باید مطابق با `tick_size` و `step_size` بازار باشند
+- حداقل ارزش سفارش برای بازارهای ریالی: **100,000 ریال**
+- حداقل ارزش سفارش برای بازارهای تتری: **5 تتر**
+- برای دریافت `tick_size` و `step_size`، از API `/api/v1/market/symbols` استفاده کنید
+
 :::
