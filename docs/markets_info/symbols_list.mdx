@@ -1,9 +1,10 @@
 ---
 sidebar_position: 4
+description: "💱 لیست نمادها"
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # لیست نمادهای بازار
 
@@ -15,7 +16,7 @@ import TabItem from '@theme/TabItem';
 
 :::info توضیح
 
-این API برای دریافت لیست تمام نمادهای قابل معامله در راستین استفاده می‌شود. این endpoint اطلاعات کاملی درباره هر جفت ارز شامل کارمزدها، دقت قیمت و مقدار، و محدودیت‌های معامله ارائه می‌دهد.
+این API برای دریافت لیست تمام نمادهای قابل معامله در راستین استفاده می‌شود. این endpoint اطلاعات کاملی درباره هر جفت ارز شامل کارمزدها، دقت قیمت و حجم، و محدودیت‌های معامله ارائه می‌دهد.
 
 این API عمومی است و نیازی به احراز هویت ندارد.
 
@@ -25,52 +26,49 @@ import TabItem from '@theme/TabItem';
 
 می‌توانید نمادها را با استفاده از پارامترهای زیر فیلتر کنید:
 
-| نام پارامتر      | نوع     | اجباری | توضیح                               | مثال   |
-|------------------|---------|--------|-------------------------------------|--------|
-| asset            | String  | False  | فیلتر بر اساس ارز                   | BTC    |
-| base_asset       | String  | False  | فیلتر بر اساس ارز پایه               | IRT    |
-| enable           | Boolean | False  | فقط نمادهای فعال                    | true   |
-| strategy_enable  | Boolean | False  | نمادهای فعال برای استراتژی          | true   |
-| margin_enable    | Boolean | False  | نمادهای فعال برای مارجین             | true   |
-| include_hidden   | String  | False  | نمایش نمادهای مخفی                  | 1      |
-| stats            | String  | False  | نمایش آمار بازار                    | 1      |
+| نام پارامتر | نوع     | اجباری | توضیح                  | مثال |
+| ----------- | ------- | ------ | ---------------------- | ---- |
+| asset       | String  | False  | فیلتر بر اساس ارز      | BTC  |
+| base_asset  | String  | False  | فیلتر بر اساس ارز پایه | IRT  |
+| enable      | Boolean | False  | فقط نمادهای فعال       | true |
+| stats       | String  | False  | نمایش آمار بازار       | 1    |
 
 ## ساختار Response
 
 **پاسخ پایه (بدون stats):**
 
-| نام پارامتر        | نوع     | توضیحات                                                  | مثال      |
-|--------------------|---------|----------------------------------------------------------|-----------|
-| name               | String  | نام نماد بازار                                           | "BTCIRT"  |
-| asset              | String  | ارز معامله‌شونده                                         | "BTC"     |
-| base_asset         | String  | ارز پایه                                                 | "IRT"     |
-| taker_fee          | String  | کارمزد taker (سفارش market)                             | "0.002"   |
-| maker_fee          | String  | کارمزد maker (سفارش limit در orderbook)                 | "0"       |
-| tick_size          | Integer | دقت قیمت (تعداد ارقام اعشار)                            | 0         |
-| step_size          | Integer | دقت مقدار (تعداد ارقام اعشار)                           | 8         |
-| min_trade_quantity | String  | حداقل مقدار مجاز برای معامله                            | "0.00001" |
-| max_trade_quantity | String  | حداکثر مقدار مجاز برای معامله                           | "10"      |
-| enable             | Boolean | آیا بازار فعال است                                      | true      |
-| strategy_enable    | Boolean | آیا برای استراتژی فعال است                              | true      |
-| margin_enable      | Boolean | آیا معاملات مارجین فعال است                             | false     |
+| نام پارامتر        | نوع     | توضیحات                                                     | مثال      |
+| ------------------ | ------- | ----------------------------------------------------------- | --------- |
+| name               | String  | نام نماد بازار                                              | "BTCIRT"  |
+| asset              | String  | ارز معامله‌شونده                                            | "BTC"     |
+| base_asset         | String  | ارز پایه                                                    | "IRT"     |
+| taker_fee          | String  | کارمزد taker (سفارش market)                                 | "0.002"   |
+| maker_fee          | String  | کارمزد maker (سفارش limit در orderbook)                     | "0"       |
+| tick_size          | Integer | دقت قیمت (تعداد ارقام اعشار)                                | 0         |
+| step_size          | Integer | دقت حجم (تعداد ارقام اعشار)                                 | 8         |
+| min_trade_quantity | String  | حداقل حجم مجاز برای معامله                                  | "0.00001" |
+| max_trade_quantity | String  | حداکثر حجم مجاز برای معامله                                 | "10"      |
+| enable             | Boolean | آیا بازار فعال است                                          | true      |
+| strategy_enable    | Boolean | آیا برای استراتژی فعال است                                  | true      |
+| margin_enable      | Boolean | آیا معاملات مارجین فعال است                                 | false     |
 | is_bookmarked      | Boolean | آیا کاربر این بازار را نشان‌گذاری کرده (نیاز به احراز هویت) | false     |
 
 **پاسخ با آمار (stats=1):**
 
 علاوه بر فیلدهای بالا، فیلدهای زیر نیز اضافه می‌شود:
 
-| نام پارامتر        | نوع     | توضیحات                                    | مثال            |
-|--------------------|---------|-----------------------------------------------|-----------------|
-| last_price         | String  | آخرین قیمت معامله                            | "3500000000"    |
-| best_buy_price     | String  | بهترین قیمت خرید (بالاترین)                 | "3499000000"    |
-| best_sell_price    | String  | بهترین قیمت فروش (پایین‌ترین)               | "3501000000"    |
-| daily_change       | String  | تغییرات 24 ساعت اخیر (درصد)                 | "2.5"           |
-| daily_high         | String  | بالاترین قیمت 24 ساعت                       | "3550000000"    |
-| daily_low          | String  | پایین‌ترین قیمت 24 ساعت                     | "3400000000"    |
-| daily_volume_base  | String  | حجم معاملات 24 ساعت (ارز پایه)               | "50000000000"   |
-| daily_volume_asset | String  | حجم معاملات 24 ساعت (ارز)                   | "14.5"          |
-| order_disable      | Boolean | آیا سفارش‌گذاری غیرفعال است                  | false           |
-| margin_order_disable| Boolean | آیا سفارش مارجین غیرفعال است                | false           |
+| نام پارامتر          | نوع     | توضیحات                        | مثال          |
+| -------------------- | ------- | ------------------------------ | ------------- |
+| last_price           | String  | آخرین قیمت معامله              | "3500000000"  |
+| best_buy_price       | String  | بهترین قیمت خرید (بالاترین)    | "3499000000"  |
+| best_sell_price      | String  | بهترین قیمت فروش (پایین‌ترین)  | "3501000000"  |
+| daily_change         | String  | تغییرات 24 ساعت اخیر (درصد)    | "2.5"         |
+| daily_high           | String  | بالاترین قیمت 24 ساعت          | "3550000000"  |
+| daily_low            | String  | پایین‌ترین قیمت 24 ساعت        | "3400000000"  |
+| daily_volume_base    | String  | حجم معاملات 24 ساعت (ارز پایه) | "50000000000" |
+| daily_volume_asset   | String  | حجم معاملات 24 ساعت (ارز)      | "14.5"        |
+| order_disable        | Boolean | آیا سفارش‌گذاری غیرفعال است    | false         |
+| margin_order_disable | Boolean | آیا سفارش مارجین غیرفعال است   | false         |
 
 ```mdx-code-block
 <Tabs
@@ -85,6 +83,7 @@ import TabItem from '@theme/TabItem';
 ```
 
 **دریافت همه نمادها:**
+
 ```bash
 GET /api/v1/market/symbols
 ```
@@ -95,11 +94,13 @@ GET /api/v1/market/symbols
 ```
 
 **دریافت نمادهای ریالی با آمار:**
+
 ```bash
 GET /api/v1/market/symbols?base_asset=IRT&stats=1
 ```
 
 **دریافت نمادهای فعال برای مارجین:**
+
 ```bash
 GET /api/v1/market/symbols?margin_enable=true
 ```
@@ -110,38 +111,39 @@ GET /api/v1/market/symbols?margin_enable=true
 ```
 
 **پاسخ پایه:**
+
 ```json
 [
-    {
-        "name": "BTCIRT",
-        "asset": "BTC",
-        "base_asset": "IRT",
-        "taker_fee": "0.002",
-        "maker_fee": "0",
-        "tick_size": 0,
-        "step_size": 8,
-        "min_trade_quantity": "0.00001",
-        "max_trade_quantity": "10",
-        "enable": true,
-        "strategy_enable": true,
-        "margin_enable": false,
-        "is_bookmarked": false
-    },
-    {
-        "name": "ETHIRT",
-        "asset": "ETH",
-        "base_asset": "IRT",
-        "taker_fee": "0.002",
-        "maker_fee": "0",
-        "tick_size": 0,
-        "step_size": 8,
-        "min_trade_quantity": "0.0001",
-        "max_trade_quantity": "100",
-        "enable": true,
-        "strategy_enable": true,
-        "margin_enable": true,
-        "is_bookmarked": false
-    }
+  {
+    "name": "BTCIRT",
+    "asset": "BTC",
+    "base_asset": "IRT",
+    "taker_fee": "0.002",
+    "maker_fee": "0",
+    "tick_size": 0,
+    "step_size": 8,
+    "min_trade_quantity": "0.00001",
+    "max_trade_quantity": "10",
+    "enable": true,
+    "strategy_enable": true,
+    "margin_enable": false,
+    "is_bookmarked": false
+  },
+  {
+    "name": "ETHIRT",
+    "asset": "ETH",
+    "base_asset": "IRT",
+    "taker_fee": "0.002",
+    "maker_fee": "0",
+    "tick_size": 0,
+    "step_size": 8,
+    "min_trade_quantity": "0.0001",
+    "max_trade_quantity": "100",
+    "enable": true,
+    "strategy_enable": true,
+    "margin_enable": true,
+    "is_bookmarked": false
+  }
 ]
 ```
 
@@ -151,33 +153,34 @@ GET /api/v1/market/symbols?margin_enable=true
 ```
 
 **پاسخ با آمار (stats=1):**
+
 ```json
 [
-    {
-        "name": "BTCIRT",
-        "asset": "BTC",
-        "base_asset": "IRT",
-        "taker_fee": "0.002",
-        "maker_fee": "0",
-        "tick_size": 0,
-        "step_size": 8,
-        "min_trade_quantity": "0.00001",
-        "max_trade_quantity": "10",
-        "enable": true,
-        "strategy_enable": true,
-        "margin_enable": false,
-        "is_bookmarked": false,
-        "last_price": "3500000000",
-        "best_buy_price": "3499000000",
-        "best_sell_price": "3501000000",
-        "daily_change": "2.5",
-        "daily_high": "3550000000",
-        "daily_low": "3400000000",
-        "daily_volume_base": "50000000000",
-        "daily_volume_asset": "14.5",
-        "order_disable": false,
-        "margin_order_disable": false
-    }
+  {
+    "name": "BTCIRT",
+    "asset": "BTC",
+    "base_asset": "IRT",
+    "taker_fee": "0.002",
+    "maker_fee": "0",
+    "tick_size": 0,
+    "step_size": 8,
+    "min_trade_quantity": "0.00001",
+    "max_trade_quantity": "10",
+    "enable": true,
+    "strategy_enable": true,
+    "margin_enable": false,
+    "is_bookmarked": false,
+    "last_price": "3500000000",
+    "best_buy_price": "3499000000",
+    "best_sell_price": "3501000000",
+    "daily_change": "2.5",
+    "daily_high": "3550000000",
+    "daily_low": "3400000000",
+    "daily_volume_base": "50000000000",
+    "daily_volume_asset": "14.5",
+    "order_disable": false,
+    "margin_order_disable": false
+  }
 ]
 ```
 
@@ -190,12 +193,14 @@ GET /api/v1/market/symbols?margin_enable=true
 ### فیلدهای مهم:
 
 - **tick_size:** تعداد ارقام اعشار برای قیمت
+
   - `tick_size=0` یعنی قیمت باید عدد صحیح باشد (مثلاً 3500000000 ریال)
   - `tick_size=2` یعنی قیمت می‌تواند 2 رقم اعشار داشته باشد (مثلاً 45.25 تتر)
 
-- **step_size:** تعداد ارقام اعشار برای مقدار
-  - `step_size=8` یعنی مقدار می‌تواند تا 8 رقم اعشار داشته باشد (مثلاً 0.00000001 بیت‌کوین)
-  - `step_size=5` یعنی مقدار می‌تواند تا 5 رقم اعشار داشته باشد (مثلاً 0.12345 اتریوم)
+- **step_size:** تعداد ارقام اعشار برای حجم
+
+  - `step_size=8` یعنی حجم می‌تواند تا 8 رقم اعشار داشته باشد (مثلاً 0.00000001 بیت‌کوین)
+  - `step_size=5` یعنی حجم می‌تواند تا 5 رقم اعشار داشته باشد (مثلاً 0.12345 اتریوم)
 
 - **taker_fee / maker_fee:**
   - Maker: کسی که سفارش limit می‌گذارد و به orderbook اضافه می‌شود
@@ -203,13 +208,16 @@ GET /api/v1/market/symbols?margin_enable=true
   - مقدار به صورت اعشار است (0.002 = 0.2٪)
 
 ### ترتیب نمادها:
+
 نمادها براساس اولویت و محبوبیت مرتب می‌شوند:
+
 1. نمادهای Trending (asset.trend)
 2. اولویت نمایش (asset.order)
 3. نمادهای پایه Trending (base_asset.trend)
 4. اولویت نمایش پایه (base_asset.order)
 
 ### is_bookmarked:
+
 این فیلد فقط در صورت احراز هویت کاربر مقدار دارد. برای کاربران مهمان همیشه `false` است.
 
 :::
