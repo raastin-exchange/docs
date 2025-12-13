@@ -202,11 +202,14 @@ Authorization: Token YOUR_TOKEN
 ```json
 {
     "symbol": "BTC",
-    "balance": "0.15",
-    "locked": "0.05",
-    "free": "0.1"
+    "asset": "BTC",
+    "balance": "0.1"
 }
 ```
+
+:::caution توجه
+فیلد `balance` در این endpoint موجودی **آزاد (free)** را برمی‌گرداند، نه موجودی کل!
+:::
 
 </TabItem>
 

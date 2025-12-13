@@ -38,13 +38,17 @@ import TabItem from "@theme/TabItem";
 
 ## ساختار پاسخ
 
-| نام پارامتر | نوع     | توضیحات              | نمونه                 |
-| ----------- | ------- | -------------------- | --------------------- |
-| id          | Integer | شناسه درخواست برداشت | 12345                 |
-| amount      | String  | مقدار برداشت         | "10"                  |
-| coin        | Object  | اطلاعات ارز          | "symbol": "USDT", ... |
-| network     | String  | نماد شبکه            | "TRC20"               |
-| address     | String  | آدرس مقصد            | "TYDzs..."            |
+| نام پارامتر     | نوع     | توضیحات                               | نمونه                                |
+| --------------- | ------- | ------------------------------------- | ------------------------------------ |
+| id              | Integer | شناسه درخواست برداشت                  | 12345                                |
+| amount          | String  | مقدار برداشت                          | "10"                                 |
+| coin            | String  | نماد ارز دیجیتال                      | "USDT"                               |
+| network         | String  | نماد شبکه                             | "TRC20"                              |
+| address         | String  | آدرس مقصد                             | "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6" |
+| memo            | String  | ممو/تگ (null اگر نیاز نباشد)          | null                                 |
+| address_book    | Object  | اطلاعات دفترچه آدرس (null اگر استفاده نشده) | null                            |
+| address_book_id | String  | شناسه دفترچه آدرس                     | null                                 |
+| source          | String  | نوع برداشت (SELF/INTERNAL_ACCOUNT)    | "SELF"                               |
 
 ```mdx-code-block
 <Tabs
@@ -76,15 +80,13 @@ values={[
 {
   "id": 12345,
   "amount": "10",
-  "coin": {
-    "symbol": "USDT",
-    "name": "تتر",
-    "name_en": "Tether"
-  },
+  "coin": "USDT",
   "network": "TRC20",
   "address": "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6",
   "memo": null,
-  "address_book": null
+  "address_book": null,
+  "address_book_id": null,
+  "source": null
 }
 ```
 
