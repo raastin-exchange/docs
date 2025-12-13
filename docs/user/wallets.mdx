@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 ## لیست کیف پول‌ها
 
-<div style={{textAlign: 'left'}}>
+<div dir="ltr" style={{textAlign: 'left'}}>
 
     GET /api/v1/wallets
 
@@ -17,7 +17,7 @@ import TabItem from '@theme/TabItem';
 
 :::info توضیح
 
-این API برای دریافت لیست تمام کیف پول‌های کاربر استفاده می‌شود. اطلاعات شامل موجودی، موجودی قفل شده، و ارزش ریالی و تتری دارایی‌ها است.
+این API برای دریافت لیست تمام کیف پول‌های کاربر استفاده می‌شود. اطلاعات شامل موجودی، موجودی قفل شده، و ارزش تومانی و تتری دارایی‌ها است.
 
 برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
 
@@ -101,7 +101,7 @@ Authorization: Token YOUR_TOKEN
 
 ## جزئیات یک کیف پول
 
-<div style={{textAlign: 'left'}}>
+<div dir="ltr" style={{textAlign: 'left'}}>
 
     GET /api/v1/wallets/&#123;symbol&#125;
 
@@ -163,7 +163,7 @@ Authorization: Token YOUR_TOKEN
 
 ## موجودی کیف پول
 
-<div style={{textAlign: 'left'}}>
+<div dir="ltr" style={{textAlign: 'left'}}>
 
     GET /api/v1/wallets/&#123;symbol&#125;/balance
 
@@ -228,7 +228,7 @@ Authorization: Token YOUR_TOKEN
 زمانی که سفارش لغو یا اجرا شود، موجودی قفل شده به موجودی آزاد برمی‌گردد.
 
 ### ارزش‌های محاسبه شده:
-- `balance_irt`: ارزش موجودی به ریال (بر اساس آخرین قیمت بازار)
+- `balance_irt`: ارزش موجودی به تومان (بر اساس آخرین قیمت بازار)
 - `balance_usdt`: ارزش موجودی به تتر (بر اساس آخرین قیمت بازار)
 
 این مقادیر لحظه‌ای محاسبه می‌شوند و بر اساس نرخ لحظه‌ای بازار است.

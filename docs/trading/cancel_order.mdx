@@ -2,12 +2,12 @@
 sidebar_position: 3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # لغو سفارش
 
-<div style={{textAlign: 'left'}}>
+<div dir="ltr" style={{textAlign: 'left'}}>
 
     POST /api/v1/market/orders/cancel
 
@@ -27,10 +27,10 @@ import TabItem from '@theme/TabItem';
 
 یکی از دو پارامتر زیر الزامی است:
 
-| نام پارامتر     | نوع    | اجباری | توضیح                                                        |
-|-----------------|--------|--------|-------------------------------------------------------------|
-| id              | String | شرطی   | شناسه سفارش (یکی از id یا client_order_id الزامی است)       |
-| client_order_id | String | شرطی   | شناسه اختصاصی سفارش توسط کاربر                             |
+| نام پارامتر     | نوع    | اجباری | توضیح                          |
+| --------------- | ------ | ------ | ------------------------------ |
+| id              | String | شرطی   | شناسه سفارش                    |
+| client_order_id | String | شرطی   | شناسه اختصاصی سفارش توسط کاربر |
 
 ```mdx-code-block
 <Tabs
@@ -43,16 +43,18 @@ import TabItem from '@theme/TabItem';
 ```
 
 **لغو با استفاده از id:**
+
 ```json
 {
-    "id": "1234567"
+  "id": "1234567"
 }
 ```
 
 **لغو با استفاده از client_order_id:**
+
 ```json
 {
-    "client_order_id": "order-123"
+  "client_order_id": "order-123"
 }
 ```
 
@@ -63,8 +65,8 @@ import TabItem from '@theme/TabItem';
 
 ```json
 {
-    "id": "1234567",
-    "canceled_at": "2024-12-10T16:45:30.123456+03:30"
+  "id": "1234567",
+  "canceled_at": "2024-12-10T16:45:30.123456+03:30"
 }
 ```
 
@@ -76,9 +78,8 @@ import TabItem from '@theme/TabItem';
 :::tip نکات مهم
 
 - **فقط سفارش‌های باز** (NEW یا PENDING) قابل لغو هستند
-- پس از لغو موفق، موجودی قفل شده **فوراً به کیف پول آزاد** برمی‌گردد
+- پس از لغو موفق، موجودی قفل شده  به کیف پول  برمی‌گردد
 - می‌توانید از `id` یا `client_order_id` برای شناسایی سفارش استفاده کنید
-- **سفارش‌های ربات** (strategy orders) بدون دسترسی ویژه قابل لغو نیستند
 
 :::
 
@@ -86,6 +87,5 @@ import TabItem from '@theme/TabItem';
 
 - **Order not found:** سفارش با شناسه داده شده یافت نشده یا متعلق به شما نیست
 - **Order cannot be canceled:** سفارش در وضعیتی است که قابل لغو نیست (مثلاً FILLED یا CANCELED)
-- **Strategy order cancellation not allowed:** سفارش متعلق به ربات است و نیاز به دسترسی ویژه دارد
 
 :::

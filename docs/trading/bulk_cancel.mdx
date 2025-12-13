@@ -1,13 +1,13 @@
 ---
 sidebar_position: 4
-sidebar_label: لغو دسته‌ای
+sidebar_label: لغو دسته‌ای سفارش‌ها
 ---
 
 # لغو دسته‌ای سفارش‌ها
 
-<div style={{textAlign: 'left'}}>
+<div dir="ltr" style={{textAlign: 'left'}}>
 
-    POST /api/v1/market/orders/bulk-cancel
+    POST /api/v1/market/orders/bulk-cancel/
 
 </div>
 
@@ -21,7 +21,7 @@ sidebar_label: لغو دسته‌ای
 
 | نام پارامتر          | نوع   | اجباری      | توضیح                                              | مثال                          |
 |----------------------|-------|-------------|----------------------------------------------------|-------------------------------|
-| id_list              | Array | شرطی | لیست شناسه سفارش‌ها (یکی از id_list یا client_order_id_list الزامی است) | ["123", "456", "789"]         |
+| id_list              | Array | شرطی | لیست شناسه سفارش‌ها | ["123", "456", "789"]         |
 | client_order_id_list | Array | شرطی | لیست شناسه‌های سفارش توسط کاربر                   | ["order-1", "order-2"]        |
 
 ## درخواست
