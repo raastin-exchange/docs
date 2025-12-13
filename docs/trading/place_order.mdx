@@ -15,17 +15,17 @@ import TabItem from '@theme/TabItem';
 
 :::info توجه
 
-برای ثبت سفارش معامله در بازار راستین از این api استفاده کنید.با درخواست مشاهده وضعیت سفارش می توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این api لازم است تا در قسمت header توکن خود را ارسال کنید.
+برای ثبت سفارش معامله در بازار راستین از این api استفاده کنید. با درخواست مشاهده وضعیت سفارش می توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این api لازم است تا در قسمت header توکن خود را ارسال کنید.
 
 :::
 
-## پارامترهای Request
+## پارامترهای درخواست
 
 | نام پارامتر      | نوع    | اجباری      | توضیح                                                   |
 |------------------|--------|-------------|--------------------------------------------------------|
 | symbol           | String | ✓           | نماد بازار (مثال: BTCIRT، ETHUSDT)                     |
 | amount           | String | ✓           | مقدار سفارش (برحسب ارز معامله‌شونده)                   |
-| price            | String | شرطی        | قیمت سفارش (الزامی برای limit، اختیاری برای market)     |
+| price            | String | شرطی        | قیمت سفارش (الزامی برای limit)     |
 | side             | String | ✓           | نوع سفارش: `buy` یا `sell`                             |
 | fill_type        | String | ✓           | نوع اجرا: `limit`، `market`، `stop_loss`، `stop_loss_limit` |
 | market           | String |             | نوع بازار: `SPOT` یا `MARGIN` (پیش‌فرض: SPOT)          |
@@ -49,7 +49,7 @@ import TabItem from '@theme/TabItem';
 {
     "symbol": "BTCIRT",
     "amount": "0.001",
-    "price": "3500000000",
+    "price": "11600000000",
     "side": "buy",
     "fill_type": "limit",
     "market": "SPOT"
@@ -73,7 +73,7 @@ import TabItem from '@theme/TabItem';
     "amount": "0.002",
     "side": "sell",
     "fill_type": "stop_loss",
-    "trigger_price": "3450000000",
+    "trigger_price": "11600000000",
     "client_order_id": "my-stop-loss-001"
 }
 ```
