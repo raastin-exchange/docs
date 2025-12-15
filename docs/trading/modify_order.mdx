@@ -1,0 +1,174 @@
+---
+sidebar_position: 5
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# ویرایش سفارش
+
+<div dir="ltr" style={{textAlign: 'left'}}>
+
+    POST /api/v1/market/orders/modify/
+
+</div>
+
+:::info توضیح
+
+این API برای ویرایش سفارش‌های باز (NEW یا PENDING) استفاده می‌شود. می‌توانید قیمت، مقدار یا قیمت یک سفارش را بدون لغو و ثبت مجدد آن تغییر دهید.
+
+**مزایا:**
+
+- سرعت بالاتر نسبت به لغو و ثبت مجدد
+- کاهش احتمال از دست رفتن فرصت معامله
+
+برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
+
+:::
+
+:::caution محدودیت‌ها
+
+- فقط سفارش‌های با وضعیت NEW یا PENDING قابل ویرایش هستند
+- سفارش‌های ربات (strategy orders) قابل ویرایش نیستند مگر با دسترسی ویژه
+- نمی‌توان نوع سفارش (side) یا نماد بازار (symbol) را تغییر داد
+
+:::
+
+## پارامترهای درخواست
+
+| نام پارامتر     | نوع    | اجباری | توضیح                                                       | مثال         |
+| --------------- | ------ | ------ | ----------------------------------------------------------- | ------------ |
+| order_id        | String | شرطی   | شناسه سفارش (یکی از order_id یا client_order_id الزامی است) | "1234567"    |
+| client_order_id | String | شرطی   | شناسه سفارش توسط کاربر                                      | "my-id-123"  |
+| price           | String | False  | قیمت جدید سفارش                                             | "3600000000" |
+| amount          | String | False  | مقدار جدید سفارش                                            | "0.002"      |
+| unfilled_amount | String | False  | مقدار باقیمانده جدید (جایگزین amount)                       | "0.0015"     |
+| trigger_price   | String | False  | قیمت تریگر جدید (فقط برای stop_loss)                        | "3550000000" |
+
+## ساختار پاسخ
+
+پاسخ این API یک سفارش کامل است (مشابه پاسخ سفارش جدید):
+
+| نامf پارامتر     | نوع     | توضیحات                           | مثال                               |
+| --------------- | ------- | --------------------------------- | ---------------------------------- |
+| id              | String  | شناسه سفارش                       | "1234567"                          |
+| client_order_id | String  | شناسه سفارش توسط کاربر            | "my-id-123"                        |
+| created         | String  | تاریخ ایجاد سفارش اولیه           | "2024-12-10T10:30:45.123456+03:30" |
+| symbol          | String  | نماد بازار                        | "BTCIRT"                           |
+| amount          | String  | مقدار جدید سفارش                  | "0.002"                            |
+| filled_amount   | String  | مقدار انجام شده                   | "0.0005"                           |
+| filled_percent  | String  | درصد انجام شده                    | "25%"                              |
+| price           | String  | قیمت جدید سفارش                   | "3600000000"                       |
+| filled_price    | String  | قیمت میانگین معاملات              | "3500000000"                       |
+| side            | String  | نوع سفارش (buy/sell)              | "buy"                              |
+| fill_type       | String  | نوع اجرا (limit/market/stop_loss) | "limit"                            |
+| status          | String  | وضعیت                             | "PENDING"                          |
+| market          | String  | نوع بازار                         | "SPOT"                             |
+| trigger_price   | String  | قیمت تریگر                        | null                               |
+| time_in_force   | String  | زمان اعتبار                       | "GTC"                              |
+| allow_cancel    | Boolean | امکان لغو                         | true                               |
+| is_oco          | Boolean | سفارش OCO                         | false                              |
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'درخواست', value: 'request'},
+        {label: 'پاسخ', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+**ویرایش با order_id و تغییر قیمت:**
+
+```json
+{
+  "order_id": "1234567",
+  "price": "3600000000"
+}
+```
+
+**ویرایش با client_order_id و تغییر مقدار:**
+
+```json
+{
+  "client_order_id": "my-custom-id-123",
+  "amount": "0.002"
+}
+```
+
+**ویرایش قیمت و مقدار باقیمانده:**
+
+```json
+{
+  "order_id": "1234567",
+  "price": "3600000000",
+  "unfilled_amount": "0.0015"
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+```json
+{
+  "id": "1234567",
+  "client_order_id": "my-id-123",
+  "created": "2024-12-10T10:30:45.123456+03:30",
+  "symbol": "BTCIRT",
+  "amount": "0.002",
+  "filled_amount": "0.0005",
+  "filled_percent": "25%",
+  "price": "3600000000",
+  "filled_price": "3500000000",
+  "side": "buy",
+  "fill_type": "limit",
+  "status": "PENDING",
+  "market": "SPOT",
+  "trigger_price": null,
+  "time_in_force": "GTC",
+  "allow_cancel": true,
+  "is_oco": false,
+  "is_open_position": null,
+  "leverage": null,
+  "position_side": null,
+  "trades": []
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+:::tip نکات مهم
+
+### تفاوت amount و unfilled_amount
+
+- **amount:** مقدار کل جدید سفارش (شامل مقدار اجرا شده)
+- **unfilled_amount:** فقط مقدار باقیمانده جدید (بدون در نظر گرفتن مقدار اجرا شده)
+
+**مثال:**
+اگر سفارش 0.01 BTC دارید که 0.004 آن اجرا شده:
+
+- برای تغییر کل سفارش به 0.015: `"amount": "0.015"`
+- برای تغییر باقیمانده به 0.008: `"unfilled_amount": "0.008"` (کل سفارش = 0.004 + 0.008 = 0.012)
+
+### محدودیت‌های ویرایش
+
+- قیمت باید مطابق با `tick_size` بازار باشد
+- مقدار باید مطابق با `step_size` بازار باشد
+- مقدار جدید نمی‌تواند کمتر از مقدار اجرا شده باشد
+- برای سفارش‌های stop_loss می‌توانید trigger_price را تغییر دهید
+
+:::
+
+:::caution خطاهای رایج
+
+- **Order not found:** سفارش با شناسه داده شده یافت نشده
+- **Order cannot be modified:** سفارش در وضعیتی است که قابل ویرایش نیست
+- **Invalid price:** قیمت مطابق با tick_size نیست
+- **Invalid amount:** مقدار کمتر از حداقل مجاز یا بیشتر از حداکثر مجاز است
+
+:::

@@ -5,107 +5,91 @@ sidebar_position: 3
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# دریافت و ساخت کیف پول
+# دریافت آدرس واریز
 
 
+<div dir="ltr" style={{textAlign: 'left'}}>
 
-
-
-<div style={{direction: 'ltr'}}>
-
-    HTTP Request https://api.raastin.com
-
-</div>
-
-<div style={{textAlign: 'left'}}>
-
-    GET /api/v1/apiwithdraw
+    GET /api/v1/deposit/address
 
 </div>
 
 :::info توجه
 
-برای دریافت آدرس کیف پول و یا ساخت کیف پول جدید از این api استفاده کنید. در این api با مشخص کردن مقادیر coin و network در کوپری پارام در صورت وجود کیف پول آدرس آن برگردانده میشود و در صورت عدم وجود کیف پول ساخته شده و آدرس کیف ساخته شده برگردانده می‌شود.
+برای دریافت آدرس واریز ارز دیجیتال از این API استفاده کنید. با مشخص کردن مقادیر `coin` و `network` در query params، در صورت وجود کیف پول آدرس آن برگردانده می‌شود و در صورت عدم وجود، کیف پول ساخته شده و آدرس آن برگردانده می‌شود.
 
+برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
+
+**نکته:** کاربر باید حداقل سطح 2 احراز هویت داشته باشد.
 
 :::
 
-```mdx-code-block
-<Tabs
-    defaultValue="json"
-    values={[
-        {label: 'Table', value: 'table'},
-        {label: 'JSON', value: 'json'},
-    ]}>
-<TabItem value="table">
-```
+## پارامترهای Query
 
+| نام پارامتر | نوع    | اجباری | توضیح                           | نمونه   |
+|-------------|--------|--------|--------------------------------|---------|
+| coin        | String | بله    | نماد ارز دیجیتال مورد نظر       | "USDT"  |
+| network     | String | بله    | نماد شبکه انتقال               | "TRC20" |
 
-```mdx-code-block
-<Tabs
-    defaultValue="request"
-    values={[
-        {label: 'Request', value: 'request'},
-        {label: 'Response', value: 'response'},
-    ]}>
-<TabItem value="request">
-```
+## ساختار پاسخ
 
-
-| نام پارامتر | نوع    | اجباری | توضیح              | نمونه |
-|-------------|--------|--------|--------------------|-------|
-| coin        | String | True   | ارزدیجتال مورد نظر | null  |
-| network     | String | True   | شبکه انتقال        | null  |
-
-
-```mdx-code-block
-</TabItem>
-<TabItem value="response">
-```
-| نام پارامتر | نوع    | توضیحات      | نمونه                                        |
-|-------------|--------|--------------|----------------------------------------------|
-| address     | String | آدرس کیف پول | "0xd0d72802b786c45a9ccfcd7f52ac9d58b96e275f" |
-
-
-</TabItem>
-
-</Tabs>
-
-</TabItem>
-
-<TabItem value="json">
-
+| نام پارامتر | نوع    | توضیحات                                        | نمونه                                        |
+|-------------|--------|------------------------------------------------|----------------------------------------------|
+| address     | String | آدرس واریز                                     | "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6"        |
+| memo        | String | ممو یا تگ (برای شبکه‌هایی که نیاز دارند)       | "123456789"                                  |
 
 ```mdx-code-block
 <Tabs
 defaultValue="request"
 values={[
-{label: 'Request', value: 'request'},
-{label: 'Response', value: 'response'},
+{label: 'درخواست', value: 'request'},
+{label: 'پاسخ', value: 'response'},
 ]}>
 <TabItem value="request">
 ```
 
-```json
-{
-    "coin": "USDT",
-    "network": "BTC"
-}
+```bash
+GET /api/v1/deposit/address?coin=USDT&network=TRC20
+Authorization: Token YOUR_TOKEN
 ```
 
 ```mdx-code-block
 </TabItem>
 <TabItem value="response">
+```
 
 ```json
 {
-    "address": "0xd0d72802b786c45a9ccfcd7f52ac9d58b96e275f"
+    "address": "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6",
+    "memo": null
 }
 ```
 
-</TabItem>
-
-</Tabs>
-
+```mdx-code-block
 </TabItem>
 </Tabs>
+```
+
+:::tip نکات مهم
+
+### شبکه‌های مختلف:
+
+برای هر ارز، باید شبکه مناسب را انتخاب کنید:
+
+- **USDT**: شبکه‌های TRC20، ERC20، BEP20
+- **BTC**: شبکه Bitcoin
+- **ETH**: شبکه Ethereum
+
+### ممو (Memo/Tag):
+
+برخی شبکه‌ها مانند XRP، XLM و TON نیاز به ممو یا تگ دارند. در این موارد حتماً هنگام واریز، ممو را وارد کنید وگرنه دارایی از دست می‌رود.
+
+:::
+
+:::caution هشدار
+
+- همیشه قبل از واریز، شبکه را با دقت بررسی کنید
+- واریز به آدرس اشتباه یا شبکه نامناسب غیرقابل بازگشت است
+- برای هر ارز و شبکه، یک آدرس منحصربه‌فرد صادر می‌شود
+
+:::

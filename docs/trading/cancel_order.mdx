@@ -1,111 +1,91 @@
 ---
-sidebar_position: 4
+sidebar_position: 3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # لغو سفارش
 
+<div dir="ltr" style={{textAlign: 'left'}}>
 
-
-
-<div style={{direction: 'ltr'}}>
-
-    HTTP Request https://api.raastin.com
+    POST /api/v1/market/orders/cancel
 
 </div>
 
-<div style={{textAlign: 'left'}}>
+:::info توضیح
 
-    POST /v1/market/orders/cancel
+این API برای لغو یک سفارش باز (NEW یا PENDING) استفاده می‌شود. پس از لغو موفق، موجودی قفل شده به کیف پول آزاد برمی‌گردد.
 
-</div>
+**نکته:** فقط سفارش‌هایی که هنوز به طور کامل اجرا نشده‌اند قابل لغو هستند. سفارش‌های با وضعیت FILLED یا CANCELED قابل لغو نیستند.
 
-:::info توجه
-
-برای ثبت سفارش معامله در بازار راستین از این api استفاده کنید. توجه به این نکته ضروری است که ثبت سفارش الزاما به معنی انجام معامله نیست. با درخواست مشاهده وضعیت سفارش می توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این api لازم است تا در قسمت header توکن خود را ارسال کنید.
+برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
 
 :::
 
-```mdx-code-block
-<Tabs
-    defaultValue="json"
-    values={[
-        {label: 'Table', value: 'table'},
-        {label: 'JSON', value: 'json'},
-    ]}>
-<TabItem value="table">
-```
+## پارامترهای درخواست
 
+یکی از دو پارامتر زیر الزامی است:
+
+| نام پارامتر     | نوع    | اجباری | توضیح                          |
+| --------------- | ------ | ------ | ------------------------------ |
+| id              | String | شرطی   | شناسه سفارش                    |
+| client_order_id | String | شرطی   | شناسه اختصاصی سفارش توسط کاربر |
 
 ```mdx-code-block
 <Tabs
     defaultValue="request"
     values={[
-        {label: 'Request', value: 'request'},
-        {label: 'Response', value: 'response'},
+        {label: 'درخواست', value: 'request'},
+        {label: 'پاسخ', value: 'response'},
     ]}>
 <TabItem value="request">
 ```
 
+**لغو با استفاده از id:**
 
-| نام پارامتر | نوع     | اجباری | توضیح        | نمونه |
-|-------------|---------|--------|--------------|-------|
-| id          | Integer | True   | شناسه سفارش	 | 1054  |
+```json
+{
+  "id": "1234567"
+}
+```
 
+**لغو با استفاده از client_order_id:**
 
+```json
+{
+  "client_order_id": "order-123"
+}
+```
 
 ```mdx-code-block
 </TabItem>
 <TabItem value="response">
 ```
-| نام پارامتر | نوع    | توضیحات | نمونه                              |
-|-------------|--------|---------|------------------------------------|
-| id          | String | null    | "620597"                           |
-| canceled_at | String | null    | "2022-04-27 12:31:49.827768+00:00" |
-
-
-</TabItem>
-
-</Tabs>
-
-</TabItem>
-
-<TabItem value="json">
-
-
-```mdx-code-block
-<Tabs
-defaultValue="request"
-values={[
-    {label: 'Request', value: 'request'},
-    {label: 'Response', value: 'response'},
-]}>
-<TabItem value="request">
-```
 
 ```json
 {
-    "id": "1054",
+  "id": "1234567",
+  "canceled_at": "2024-12-10T16:45:30.123456+03:30"
 }
 ```
-
 
 ```mdx-code-block
 </TabItem>
-<TabItem value="response">
-
-```json
-{
-    "id": "620597",
-    "canceled_at": "2022-04-27 12:31:49.827768+00:00"
-}
+</Tabs>
 ```
 
-</TabItem>
+:::tip نکات مهم
 
-</Tabs>
+- **فقط سفارش‌های باز** (NEW یا PENDING) قابل لغو هستند
+- پس از لغو موفق، موجودی قفل شده  به کیف پول  برمی‌گردد
+- می‌توانید از `id` یا `client_order_id` برای شناسایی سفارش استفاده کنید
 
-</TabItem>
-</Tabs>
+:::
+
+:::caution خطاهای رایج
+
+- **Order not found:** سفارش با شناسه داده شده یافت نشده یا متعلق به شما نیست
+- **Order cannot be canceled:** سفارش در وضعیتی است که قابل لغو نیست (مثلاً FILLED یا CANCELED)
+
+:::

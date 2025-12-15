@@ -2,106 +2,127 @@
 sidebar_position: 1
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # درخواست برداشت
 
+<div dir="ltr" style={{textAlign: 'left'}}>
 
-
-<div style={{direction: 'ltr'}}>
-
-    HTTP Request https://api.raastin.com
-
-</div>
-
-<div style={{textAlign: 'left'}}>
-
-    POST /api/v1/apiwithdraw
+    POST /api/v1/withdraw/
 
 </div>
 
 :::info توجه
 
-برای درخواست برداشت رمز ارز از این api استفاده کنید.
+برای درخواست برداشت ارز دیجیتال از این API استفاده کنید.
+
+برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
+
+**نکته:** کاربر باید حداقل سطح 2 احراز هویت داشته باشد.
 
 :::
 
-```mdx-code-block
-<Tabs
-    defaultValue="json"
-    values={[
-        {label: 'Table', value: 'table'},
-        {label: 'JSON', value: 'json'},
-    ]}>
-<TabItem value="table">
-```
+## پارامترهای درخواست
 
+| نام پارامتر     | نوع    | اجباری | توضیح                                            | نمونه                                |
+| --------------- | ------ | ------ | ------------------------------------------------ | ------------------------------------ |
+| coin            | String | بله    | نماد ارز دیجیتال                                 | "USDT"                               |
+| network         | String | شرطی   | نماد شبکه انتقال (الزامی برای برداشت خارجی)      | "TRC20"                              |
+| address         | String | شرطی   | آدرس مقصد برداشت (الزامی برای برداشت خارجی)      | "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6" |
+| amount          | String | بله    | مقدار برداشت                                     | "10.0"                               |
+| memo            | String | خیر    | ممو یا تگ (برای شبکه‌هایی که نیاز دارند)         | "123456"                             |
+| code            | String | شرطی   | کد تایید پیامکی                                  | "123456"                             |
+| totp            | String | شرطی   | کد احراز هویت دو عاملی (در صورت فعال بودن)       | "123456"                             |
+| address_book_id | String | خیر    | شناسه دفترچه آدرس (در صورت استفاده از whitelist) | "123"                                |
 
-```mdx-code-block
-<Tabs
-    defaultValue="request"
-    values={[
-        {label: 'Request', value: 'request'},
-        {label: 'Response', value: 'response'},
-    ]}>
-<TabItem value="request">
-```
+## ساختار پاسخ
 
-
-| نام پارامتر | نوع    | اجباری      | توضیح            | نمونه |
-|-------------|--------|-------------|------------------|-------|
-
-
-
-```mdx-code-block
-</TabItem>
-<TabItem value="response">
-```
-| نام پارامتر | نوع    | توضیحات | نمونه                   |
-|-------------|--------|---------|-------------------------|
-| amount      | String | null    | "10.000000000000000000" |
-
-
-</TabItem>
-
-</Tabs>
-
-</TabItem>
-
-<TabItem value="json">
-
+| نام پارامتر     | نوع     | توضیحات                               | نمونه                                |
+| --------------- | ------- | ------------------------------------- | ------------------------------------ |
+| id              | Integer | شناسه درخواست برداشت                  | 12345                                |
+| amount          | String  | مقدار برداشت                          | "10"                                 |
+| coin            | String  | نماد ارز دیجیتال                      | "USDT"                               |
+| network         | String  | نماد شبکه                             | "TRC20"                              |
+| address         | String  | آدرس مقصد                             | "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6" |
+| memo            | String  | ممو/تگ (null اگر نیاز نباشد)          | null                                 |
+| address_book    | Object  | اطلاعات دفترچه آدرس (null اگر استفاده نشده) | null                            |
+| address_book_id | String  | شناسه دفترچه آدرس                     | null                                 |
+| source          | String  | نوع برداشت (SELF/INTERNAL_ACCOUNT)    | "SELF"                               |
 
 ```mdx-code-block
 <Tabs
 defaultValue="request"
 values={[
-{label: 'Request', value: 'request'},
-{label: 'Response', value: 'response'},
+{label: 'درخواست', value: 'request'},
+{label: 'پاسخ', value: 'response'},
 ]}>
 <TabItem value="request">
 ```
 
 ```json
 {
+  "coin": "USDT",
+  "network": "TRC20",
+  "address": "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6",
+  "amount": "10.0",
+  "code": "123456",
+  "totp": "654321"
 }
 ```
-
 
 ```mdx-code-block
 </TabItem>
 <TabItem value="response">
+```
 
 ```json
 {
-    "amount": "10.000000000000000000"
+  "id": 12345,
+  "amount": "10",
+  "coin": "USDT",
+  "network": "TRC20",
+  "address": "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6",
+  "memo": null,
+  "address_book": null,
+  "address_book_id": null,
+  "source": null
 }
 ```
 
-</TabItem>
-
-</Tabs>
-
+```mdx-code-block
 </TabItem>
 </Tabs>
+```
 
+:::tip نکات مهم
+
+### احراز هویت دو مرحله‌ای:
+
+برای امنیت بیشتر، درخواست‌های برداشت نیاز به تایید دو مرحله‌ای دارند:
+
+1. **کد پیامکی (code)**: کد 6 رقمی که به شماره موبایل شما ارسال می‌شود
+2. **کد TOTP (totp)**: کد Google Authenticator (در صورت فعال بودن)
+
+### دفترچه آدرس (Whitelist):
+
+- می‌توانید آدرس‌ها را در دفترچه آدرس ذخیره کنید
+- آدرس‌های whitelist شده نیاز به کد پیامکی ندارند
+- با استفاده از `address_book_id` می‌توانید از آدرس‌های ذخیره شده استفاده کنید
+
+### محدودیت‌های برداشت:
+
+- مقدار برداشت باید بین `withdraw_min` و `withdraw_max` شبکه باشد
+- محدودیت روزانه برداشت بر اساس سطح احراز هویت تعیین می‌شود
+- برخی ارزها ممکن است موقتاً غیرفعال باشند
+
+:::
+
+:::caution هشدار امنیتی
+
+- آدرس مقصد را با دقت بررسی کنید
+- شبکه انتقال را صحیح انتخاب کنید
+- برداشت به آدرس یا شبکه اشتباه غیرقابل بازگشت است
+- ممو (Memo/Tag) را در صورت نیاز حتماً وارد کنید
+
+:::

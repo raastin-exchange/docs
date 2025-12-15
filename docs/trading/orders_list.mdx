@@ -1,176 +1,124 @@
 ---
-sidebar_position: 3
+sidebar_position: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# لیست سفارش‌ها
 
-# لیست سفارش ها
+<div dir="ltr" style={{textAlign: 'left'}}>
 
-
-
-
-<div style={{direction: 'ltr'}}>
-
-    HTTP Request https://api.raastin.com
-
-</div>
-
-:::tip توجه
-
-برای ثبت سفارش معامله در بازار راستین از این api استفاده کنید. توجه به این نکته ضروری است که ثبت سفارش الزاما به معنی انجام معامله نیست. با درخواست مشاهده وضعیت سفارش می توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این api لازم است تا در قسمت header توکن خود را ارسال کنید.
-
-:::
-
-<div style={{textAlign: 'left'}}>
-
-    GET /api/v1/market/orders
+    GET /api/v1/market/orders/
 
 </div>
 
 :::info توضیح
 
-برای دریافت لیست همه سفارش ها میتوانید از این api استفاده کنید.
-:::
+این API برای دریافت لیست تمام سفارش‌های کاربر (فعال و تاریخچه) استفاده می‌شود. نتایج به صورت صفحه‌بندی شده (paginated) برگردانده می‌شوند.
 
-<div style={{textAlign: 'left'}}>
-
-    GET /api/v1/market/orders/<id:str>
-
-</div>
-
-:::info توضیح
-
-برای دریافت اطلاعات مربوط به یک سفارش کافیست در انتهای ادرس api مربوط به لیست سفارشات id سفارش مورد نظر را قرار دهید.
-
-id مورد نظر را به صورت url param بفرستید.
-:::
-
-<div style={{textAlign: 'left'}}>
-
-    GET /api/v1/market/orders/?symbol=&status=
-
-</div>
-
-:::info توضیح
-در این api امکان فیلتر کردن بر اساس وضعیت سفارش و بازار وجود دارد.
-
-اطلاعات  درخواست را به صورت query param بفرستید.
+برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
 
 :::
 
-```mdx-code-block
-<Tabs
-    defaultValue="json"
-    values={[
-        {label: 'Table', value: 'table'},
-        {label: 'JSON', value: 'json'},
-    ]}>
-<TabItem value="table">
+## پارامترهای Query (اختیاری)
+
+| نام پارامتر | نوع     | اجباری | توضیح                                             | نمونه    |
+| ----------- | ------- | ------ | ------------------------------------------------- | -------- |
+| symbol      | String  | False  | نماد بازار برای فیلتر کردن                        | "BTCIRT" |
+| status      | String  | False  | وضعیت سفارش (NEW, PENDING, FILLED, CANCELED)      | "NEW"    |
+| page        | Integer | False  | شماره صفحه (پیش‌فرض: 1)                           | 1        |
+| page_size   | Integer | False  | تعداد نتایج در هر صفحه (پیش‌فرض: 50، حداکثر: 100) | 50       |
+
+## ساختار پاسخ
+
+**پاسخ صفحه‌بندی شده:**
+
+| نام پارامتر | نوع     | توضیحات                                 | نمونه                                               |
+| ----------- | ------- | --------------------------------------- | --------------------------------------------------- |
+| count       | Integer | تعداد کل سفارش‌ها                       | 150                                                 |
+| next        | String  | لینک صفحه بعدی (null اگر صفحه آخر باشد) | https://api.raastin.com/api/v1/market/orders?page=3 |
+| previous    | String  | لینک صفحه قبلی (null اگر صفحه اول باشد) | https://api.raastin.com/api/v1/market/orders?page=1 |
+| results     | Array   | آرایه‌ای از سفارش‌ها                    | [...]                                               |
+
+**ساختار هر سفارش در results:**
+
+| نام پارامتر     | نوع    | توضیحات                                   | نمونه                              |
+| --------------- | ------ | ----------------------------------------- | ---------------------------------- |
+| id              | String | شناسه سفارش                               | "620881"                           |
+| client_order_id | String | شناسه اختصاصی کاربر (اگر ارسال شده باشد)  | "my-order-123"                     |
+| created         | String | تاریخ و زمان ایجاد سفارش                  | "2024-12-10T17:03:57.002570+03:30" |
+| symbol          | String | نماد بازار                                | "BTCIRT"                           |
+| amount          | String | مقدار کل سفارش                            | "0.001"                            |
+| filled_amount   | String | مقدار انجام شده                           | "0.0005"                           |
+| filled_percent  | String | درصد انجام شده                            | "50%"                              |
+| price           | String | قیمت سفارش                                | "3500000000"                       |
+| filled_price    | String | قیمت میانگین معاملات                      | "3498000000"                       |
+| side            | String | نوع سفارش (buy/sell)                      | "buy"                              |
+| fill_type       | String | نوع اجرا (limit/market/stop_loss)         | "limit"                            |
+| status          | String | وضعیت سفارش (NEW/PENDING/FILLED/CANCELED) | "FILLED"                           |
+| market          | String | نوع بازار (SPOT/MARGIN)                   | "SPOT"                             |
+| time_in_force   | String | زمان اعتبار (GTC/IOC/FOK)                 | "GTC"                              |
+
+## مثال درخواست با فیلتر
+
+```bash
+GET /api/v1/market/orders?symbol=BTCIRT&status=NEW&page=1&page_size=20
+Authorization: Token YOUR_TOKEN
 ```
 
-
-```mdx-code-block
-<Tabs
-    defaultValue="request"
-    values={[
-        {label: 'Request', value: 'request'},
-        {label: 'Response', value: 'response'},
-    ]}>
-<TabItem value="request">
-```
-
-
-| نام پارامتر | نوع    | اجباری | توضیح               | نمونه |
-|-------------|--------|--------|---------------------|-------|
-| symbol      | String | False  | ارزدیجیتال مورد نظر | null  |
-| status      | String | False  | وضعیت سفارش         | null  |
-
-
-```mdx-code-block
-</TabItem>
-<TabItem value="response">
-```
-| نام پارامتر | نوع   | توضیحات | نمونه |
-|-------------|-------|---------|-------|
-| count       | null  | null    | 1     |
-| next        | null  | null    | null  |
-| previous    | null  | null    | null  |
-| results     | Array | null    | null  |
-
-results:
-
-| نام پارامتر   | نوع     | توضیحات | نمونه                              |
-|---------------|---------|---------|------------------------------------|
-| id            | Integer | null    | 620881                             |
-| created       | String  | null    | "2022-04-27T17:03:57.002570+04:30" |
-| symbol        | String  | null    | "BTCIRT"                           |
-| amount        | String  | null    | "100.00000"                        |
-| filled_amount | String  | null    | "0.00000"                          |
-| price         | String  | null    | "100000"                           |
-| filled_price  | String  | null    | null                               |
-| side          | String  | null    | buy                                |
-| fill_type     | String  | null    | "limit"                            |
-| status        | String  | null    | "new"                              |
-
-</TabItem>
-
-</Tabs>
-
-</TabItem>
-
-<TabItem value="json">
-
-
-```mdx-code-block
-<Tabs
-    defaultValue="request"
-    values={[
-        {label: 'Request', value: 'request'},
-        {label: 'Response', value: 'response'},
-    ]}>
-<TabItem value="request">
-```
+## پاسخ
 
 ```json
 {
-    "symbol": "",
-    "status": "",
+  "count": 150,
+  "next": "/api/v1/market/orders?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": "1234567",
+      "client_order_id": "my-order-123",
+      "created": "2024-12-10T16:06:29.953660+03:30",
+      "symbol": "BTCIRT",
+      "amount": "0.001",
+      "filled_amount": "0.0005",
+      "filled_percent": "50%",
+      "price": "3500000000",
+      "filled_price": "3498000000",
+      "side": "buy",
+      "fill_type": "limit",
+      "status": "FILLED",
+      "market": "SPOT",
+      "time_in_force": "GTC",
+      "trigger_price": null,
+      "allow_cancel": true,
+      "trades": []
+    },
+    {
+      "id": "1234566",
+      "client_order_id": null,
+      "created": "2024-12-10T15:30:15.123456+03:30",
+      "symbol": "ETHIRT",
+      "amount": "0.5",
+      "filled_amount": "0.5",
+      "filled_percent": "100%",
+      "price": "120000000",
+      "filled_price": "120000000",
+      "side": "sell",
+      "fill_type": "limit",
+      "status": "FILLED",
+      "market": "SPOT",
+      "time_in_force": "GTC",
+      "trigger_price": null,
+      "allow_cancel": false,
+      "trades": []
+    }
+  ]
 }
 ```
 
-```mdx-code-block
-</TabItem>
-<TabItem value="response">
+:::tip نکات مهم
 
-```json
-[
-    {
-        "count": 1,
-        "next": null,
-        "previous": null,
-        "results": [
-            {
-                "id": 620597,
-                "created": "2022-04-27T16:06:29.953660+04:30",
-                "symbol": "BTCIRT",
-                "amount": "100.00000",
-                "filled_amount": "0.00000",
-                "price": "100000",
-                "filled_price": null,
-                "side": "buy",
-                "fill_type": "limit",
-                "status": "new"
-            }
-        ]
-    },
-]
-```
+### وضعیت‌های سفارش:
 
-</TabItem>
-
-</Tabs>
-
-</TabItem>
-</Tabs>
-
+- **NEW**: سفارش جدید ثبت شده، در صف اجرا
+- **PENDING**: در حال بررسی یا در انتظار trigger (برای stop_loss)
+- **FILLED**: سفارش کاملاً اجرا شده
+- **CANCELED**: سفارش لغو شده

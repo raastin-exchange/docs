@@ -1,0 +1,252 @@
+---
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# کیف پول‌ها
+
+## لیست کیف پول‌ها
+
+<div dir="ltr" style={{textAlign: 'left'}}>
+
+    GET /api/v1/wallets
+
+</div>
+
+:::info توضیح
+
+این API برای دریافت لیست تمام کیف پول‌های کاربر استفاده می‌شود. اطلاعات شامل موجودی، موجودی قفل شده، و ارزش تومانی و تتری دارایی‌ها است.
+
+برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
+
+:::
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'درخواست', value: 'request'},
+        {label: 'پاسخ', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+```bash
+GET /api/v1/wallets
+Authorization: Token YOUR_TOKEN
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+```json
+[
+    {
+        "symbol": "BTC",
+        "name": "بیت کوین",
+        "name_en": "Bitcoin",
+        "balance": "0.15",
+        "locked": "0.05",
+        "free": "0.1",
+        "balance_irt": "5250000000",
+        "balance_usdt": "1500",
+        "can_deposit": true,
+        "can_withdraw": true,
+        "precision": 8,
+        "icon": "https://raastin.com/media/assets/btc.png",
+        "color": "#F7931A"
+    },
+    {
+        "symbol": "ETH",
+        "name": "اتریوم",
+        "name_en": "Ethereum",
+        "balance": "2.5",
+        "locked": "0.5",
+        "free": "2",
+        "balance_irt": "300000000",
+        "balance_usdt": "85.71",
+        "can_deposit": true,
+        "can_withdraw": true,
+        "precision": 8,
+        "icon": "https://raastin.com/media/assets/eth.png",
+        "color": "#627EEA"
+    },
+    {
+        "symbol": "IRT",
+        "name": "تومان",
+        "name_en": "Iranian Rial",
+        "balance": "10000000",
+        "locked": "2000000",
+        "free": "8000000",
+        "balance_irt": "10000000",
+        "balance_usdt": "2.857",
+        "can_deposit": true,
+        "can_withdraw": true,
+        "precision": 0,
+        "icon": "https://raastin.com/media/assets/irt.png",
+        "color": "#00A651"
+    }
+]
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## جزئیات یک کیف پول
+
+<div dir="ltr" style={{textAlign: 'left'}}>
+
+    GET /api/v1/wallets/&#123;symbol&#125;
+
+</div>
+
+:::info توضیح
+
+این API برای دریافت اطلاعات جزئی یک کیف پول خاص استفاده می‌شود.
+
+**پارامتر مسیر:**
+- `symbol`: نماد ارز (مثال: BTC، ETH، IRT)
+
+:::
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'درخواست', value: 'request'},
+        {label: 'پاسخ', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+```bash
+GET /api/v1/wallets/BTC
+Authorization: Token YOUR_TOKEN
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+```json
+{
+    "symbol": "BTC",
+    "name": "بیت کوین",
+    "name_en": "Bitcoin",
+    "balance": "0.15",
+    "locked": "0.05",
+    "free": "0.1",
+    "balance_irt": "5250000000",
+    "balance_usdt": "1500",
+    "can_deposit": true,
+    "can_withdraw": true,
+    "precision": 8,
+    "icon": "https://raastin.com/media/assets/btc.png",
+    "color": "#F7931A"
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## موجودی کیف پول
+
+<div dir="ltr" style={{textAlign: 'left'}}>
+
+    GET /api/v1/wallets/&#123;symbol&#125;/balance
+
+</div>
+
+:::info توضیح
+
+این API برای دریافت سریع موجودی یک کیف پول خاص استفاده می‌شود. اطلاعات کمتری نسبت به endpoint بالا برمی‌گرداند و سریع‌تر است.
+
+**پارامتر مسیر:**
+- `symbol`: نماد ارز (مثال: BTC، ETH، IRT)
+
+:::
+
+
+```mdx-code-block
+<Tabs
+    defaultValue="request"
+    values={[
+        {label: 'درخواست', value: 'request'},
+        {label: 'پاسخ', value: 'response'},
+    ]}>
+<TabItem value="request">
+```
+
+```bash
+GET /api/v1/wallets/BTC/balance
+Authorization: Token YOUR_TOKEN
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+```json
+{
+    "symbol": "BTC",
+    "asset": "BTC",
+    "balance": "0.1"
+}
+```
+
+:::caution توجه
+فیلد `balance` در این endpoint موجودی **آزاد (free)** را برمی‌گرداند، نه موجودی کل!
+:::
+
+</TabItem>
+
+</Tabs>
+
+:::tip نکات مهم
+
+### محاسبه موجودی:
+```
+موجودی کل (balance) = موجودی آزاد (free) + موجودی قفل شده (locked)
+```
+
+### موجودی قفل شده (locked):
+موجودی که در سفارش‌های باز قفل شده است. این مقدار شامل:
+- سفارش‌های limit در orderbook
+- سفارش‌های stop-loss که هنوز trigger نشده‌اند
+- سفارش‌های در حال پردازش
+
+زمانی که سفارش لغو یا اجرا شود، موجودی قفل شده به موجودی آزاد برمی‌گردد.
+
+### ارزش‌های محاسبه شده:
+- `balance_irt`: ارزش موجودی به تومان (بر اساس آخرین قیمت بازار)
+- `balance_usdt`: ارزش موجودی به تتر (بر اساس آخرین قیمت بازار)
+
+این مقادیر لحظه‌ای محاسبه می‌شوند و بر اساس نرخ لحظه‌ای بازار است.
+
+### محدودیت‌های واریز و برداشت:
+- `can_deposit`: اگر false باشد، امکان واریز این ارز وجود ندارد (معمولاً موقتی)
+- `can_withdraw`: اگر false باشد، امکان برداشت این ارز وجود ندارد (معمولاً برای امنیت یا تعمیرات)
+
+:::
+
+:::caution نکته امنیتی
+
+این APIها اطلاعات حساس کاربر را برمی‌گردانند. حتماً:
+- توکن خود را ایمن نگه دارید
+- از HTTPS استفاده کنید
+- توکن را در سمت client ذخیره نکنید (به جز storage امن)
+
+:::
