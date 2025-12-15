@@ -5,9 +5,13 @@ const { themes } = require('prism-react-renderer');
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
 
+// Exchange name configuration - change these to rebrand
+const EXCHANGE_NAME = "راستین";
+const EXCHANGE_NAME_EN = "Raastin";
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "مستندات API راستین",
+  title: `مستندات API ${EXCHANGE_NAME}`,
   favicon: "img/logo.svg",
 
   // Set the production url of your site here
@@ -17,9 +21,9 @@ const config = {
   baseUrl: "/docs/",
 
   // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: "raastin-exchange", // Usually your GitHub org/user name.
-  projectName: "docs", // Usually your repo name.
+  organizationName: "raastin-exchange",
+  projectName: "docs",
+  trailingSlash: true,
 
   onBrokenLinks: "throw",
   markdown: {
@@ -59,9 +63,9 @@ const config = {
       // Replace with your project's social card
       image: "img/docusaurus-social-card.jpg",
       navbar: {
-        title: "راستین",
+        title: EXCHANGE_NAME,
         logo: {
-          alt: "راستین",
+          alt: EXCHANGE_NAME,
           src: "img/logo.svg",
         },
         items: [
@@ -106,14 +110,17 @@ const config = {
 
       footer: {
         links: [{}],
-        copyright: `Copyright © ${new Date().getFullYear()} Raastin`,
+        copyright: `Copyright © ${new Date().getFullYear()} ${EXCHANGE_NAME_EN}`,
       },
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
     }),
-  customFields: {},
+  customFields: {
+    exchangeName: EXCHANGE_NAME,
+    exchangeNameEn: EXCHANGE_NAME_EN,
+  },
 };
 
 module.exports = config;
