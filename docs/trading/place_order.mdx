@@ -2,38 +2,34 @@
 sidebar_position: 1
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import ExchangeName from '@site/src/components/ExchangeName';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import ExchangeName from "@site/src/components/ExchangeName";
 
 # ثبت سفارش جدید
 
 <div dir="ltr" style={{textAlign: 'left'}}>
 
-    POST /api/v1/market/orders
+    POST /api/v1/market/orders/
 
 </div>
 
-:::info توجه
-
 برای ثبت سفارش معامله در بازار <ExchangeName /> از این API استفاده کنید. با درخواست مشاهده وضعیت سفارش می‌توانید از وضعیت سفارش خود مطلع شوید. برای استفاده از این API لازم است تا در قسمت header توکن خود را ارسال کنید.
-
-:::
 
 ## پارامترهای درخواست
 
-| نام پارامتر      | نوع    | اجباری      | توضیح                                                   |
-|------------------|--------|-------------|--------------------------------------------------------|
-| symbol           | String | ✓           | نماد بازار (مثال: BTCIRT، ETHUSDT)                     |
-| amount           | String | ✓           | مقدار سفارش (برحسب ارز معامله‌شونده)                   |
-| price            | String | شرطی        | قیمت سفارش (الزامی برای limit)     |
-| side             | String | ✓           | نوع سفارش: `buy` یا `sell`                             |
-| fill_type        | String | ✓           | نوع اجرا: `limit`، `market`، `stop_loss`، `stop_loss_limit` |
-| market           | String |             | نوع بازار: `SPOT` یا `MARGIN` (پیش‌فرض: SPOT)          |
-| client_order_id  | String |             | شناسه اختصاصی سفارش توسط کاربر                         |
-| time_in_force    | String |             | زمان اعتبار: `GTC`، `IOC`، `FOK` (پیش‌فرض: GTC)        |
-| trigger_price    | String | شرطی        | قیمت تریگر (الزامی برای stop_loss)                      |
-| is_open_position | Boolean|             | آیا سفارش برای باز کردن پوزیشن است (فقط MARGIN)        |
+| نام پارامتر      | نوع     | اجباری | توضیح                                                       |
+| ---------------- | ------- | ------ | ----------------------------------------------------------- |
+| symbol           | String  | ✓      | نماد بازار (مثال: BTCIRT، ETHUSDT)                          |
+| amount           | String  | ✓      | مقدار سفارش (برحسب ارز معامله‌شونده)                        |
+| price            | String  | شرطی   | قیمت سفارش (الزامی برای limit)                              |
+| side             | String  | ✓      | نوع سفارش: `buy` یا `sell`                                  |
+| fill_type        | String  | ✓      | نوع اجرا: `limit`، `market`، `stop_loss` |
+| market           | String  |        | نوع بازار: `SPOT` یا `MARGIN` (پیش‌فرض: SPOT)               |
+| client_order_id  | String  |        | شناسه اختصاصی سفارش توسط کاربر                              |
+| time_in_force    | String  |        | زمان اعتبار: `GTC`، `IOC`، `FOK` (پیش‌فرض: GTC)             |
+| trigger_price    | String  | شرطی   | قیمت تریگر (الزامی برای stop_loss)                          |
+| is_open_position | Boolean |        | آیا سفارش برای باز کردن پوزیشن است (فقط MARGIN)             |
 
 ```mdx-code-block
 <Tabs
@@ -46,36 +42,39 @@ import ExchangeName from '@site/src/components/ExchangeName';
 ```
 
 **مثال 1: سفارش خرید limit:**
+
 ```json
 {
-    "symbol": "BTCIRT",
-    "amount": "0.001",
-    "price": "11600000000",
-    "side": "buy",
-    "fill_type": "limit",
-    "market": "SPOT"
+  "symbol": "BTCIRT",
+  "amount": "0.001",
+  "price": "11600000000",
+  "side": "buy",
+  "fill_type": "limit",
+  "market": "SPOT"
 }
 ```
 
 **مثال 2: سفارش فروش market:**
+
 ```json
 {
-    "symbol": "ETHIRT",
-    "amount": "0.5",
-    "side": "sell",
-    "fill_type": "market"
+  "symbol": "ETHIRT",
+  "amount": "0.5",
+  "side": "sell",
+  "fill_type": "market"
 }
 ```
 
 **مثال 3: سفارش stop_loss:**
+
 ```json
 {
-    "symbol": "BTCIRT",
-    "amount": "0.002",
-    "side": "sell",
-    "fill_type": "stop_loss",
-    "trigger_price": "11600000000",
-    "client_order_id": "my-stop-loss-001"
+  "symbol": "BTCIRT",
+  "amount": "0.002",
+  "side": "sell",
+  "fill_type": "stop_loss",
+  "trigger_price": "11600000000",
+  "client_order_id": "my-stop-loss-001"
 }
 ```
 
@@ -86,27 +85,27 @@ import ExchangeName from '@site/src/components/ExchangeName';
 
 ```json
 {
-    "id": "1234567",
-    "client_order_id": "order-123",
-    "created": "2024-12-10T15:30:45.123456+03:30",
-    "symbol": "BTCIRT",
-    "amount": "0.001",
-    "filled_amount": "0",
-    "filled_percent": "0%",
-    "price": "3500000000",
-    "filled_price": null,
-    "side": "buy",
-    "fill_type": "limit",
-    "status": "NEW",
-    "market": "SPOT",
-    "trigger_price": null,
-    "time_in_force": "GTC",
-    "allow_cancel": true,
-    "is_oco": false,
-    "is_open_position": null,
-    "leverage": null,
-    "position_side": null,
-    "trades": []
+  "id": "1234567",
+  "client_order_id": "order-123",
+  "created": "2024-12-10T15:30:45.123456+03:30",
+  "symbol": "BTCIRT",
+  "amount": "0.001",
+  "filled_amount": "0",
+  "filled_percent": "0%",
+  "price": "3500000000",
+  "filled_price": null,
+  "side": "buy",
+  "fill_type": "limit",
+  "status": "NEW",
+  "market": "SPOT",
+  "trigger_price": null,
+  "time_in_force": "GTC",
+  "allow_cancel": true,
+  "is_oco": false,
+  "is_open_position": null,
+  "leverage": null,
+  "position_side": null,
+  "trades": []
 }
 ```
 
@@ -117,18 +116,20 @@ import ExchangeName from '@site/src/components/ExchangeName';
 
 :::tip نکات مهم
 
-### انواع fill_type:
+### انواع fill_type
+
 - **limit**: سفارش با قیمت مشخص که در orderbook قرار می‌گیرد
 - **market**: سفارش فوری با بهترین قیمت موجود
 - **stop_loss**: سفارش فروش اتوماتیک زمانی که قیمت به trigger_price برسد
-- **stop_loss_limit**: ترکیب stop_loss و limit
 
-### انواع time_in_force:
+### انواع time_in_force
+
 - **GTC** (Good Till Cancel): سفارش تا زمان لغو یا اجرا باقی می‌ماند (پیش‌فرض)
 - **IOC** (Immediate or Cancel): بلافاصله اجرا شود، مقدار باقیمانده لغو می‌شود
 - **FOK** (Fill or Kill): یا کاملاً اجرا شود یا کاملاً لغو شود
 
-### نکات:
+### نکات
+
 - **قیمت در بازارهای تومانی به تومان است** (مثلاً 3500000000 = 3.5 میلیارد تومان)
 - **قیمت در بازارهای تتری به تتر است** (مثلاً 95000 = 95 هزار تتر)
 - **واحد amount بر اساس ارز معامله‌شونده است** (برای BTCIRT، برحسب BTC است)

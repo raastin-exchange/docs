@@ -10,22 +10,16 @@ sidebar_position: 2
 
 </div>
 
-:::info توضیح
-
-این API برای دریافت لیست تمام سفارش‌های کاربر (فعال و تاریخچه) استفاده می‌شود. نتایج به صورت صفحه‌بندی شده (paginated) برگردانده می‌شوند.
-
-برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
-
-:::
+این API برای دریافت لیست تمام سفارش‌های کاربر (فعال و تاریخچه) استفاده می‌شود. نتایج به صورت صفحه‌بندی شده (paginated) برگردانده می‌شوند. برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
 
 ## پارامترهای Query (اختیاری)
 
-| نام پارامتر | نوع     | اجباری | توضیح                                             | نمونه    |
-| ----------- | ------- | ------ | ------------------------------------------------- | -------- |
-| symbol      | String  | False  | نماد بازار برای فیلتر کردن                        | "BTCIRT" |
-| status      | String  | False  | وضعیت سفارش (NEW, PENDING, FILLED, CANCELED)      | "NEW"    |
-| page        | Integer | False  | شماره صفحه (پیش‌فرض: 1)                           | 1        |
-| page_size   | Integer | False  | تعداد نتایج در هر صفحه (پیش‌فرض: 50، حداکثر: 100) | 50       |
+| نام پارامتر | نوع     | توضیح                                             | نمونه    |
+| ----------- | ------- | ------------------------------------------------- | -------- |
+| symbol      | String  | نماد بازار برای فیلتر کردن                        | "BTCIRT" |
+| status      | String  | وضعیت سفارش (NEW, PENDING, FILLED, CANCELED)      | "NEW"    |
+| page        | Integer | شماره صفحه (پیش‌فرض: 1)                           | 1        |
+| limit       | Integer | تعداد نتایج در هر صفحه (پیش‌فرض: 50، حداکثر: 100) | 50       |
 
 ## ساختار پاسخ
 
@@ -34,8 +28,8 @@ sidebar_position: 2
 | نام پارامتر | نوع     | توضیحات                                 | نمونه                                               |
 | ----------- | ------- | --------------------------------------- | --------------------------------------------------- |
 | count       | Integer | تعداد کل سفارش‌ها                       | 150                                                 |
-| next        | String  | لینک صفحه بعدی (null اگر صفحه آخر باشد) | https://api.raastin.com/api/v1/market/orders?page=3 |
-| previous    | String  | لینک صفحه قبلی (null اگر صفحه اول باشد) | https://api.raastin.com/api/v1/market/orders?page=1 |
+| next        | String  | لینک صفحه بعدی (null اگر صفحه آخر باشد) | https://api.raastin.com/api/v1/market/orders/?page=3 |
+| previous    | String  | لینک صفحه قبلی (null اگر صفحه اول باشد) | https://api.raastin.com/api/v1/market/orders/?page=1 |
 | results     | Array   | آرایه‌ای از سفارش‌ها                    | [...]                                               |
 
 **ساختار هر سفارش در results:**
@@ -60,7 +54,7 @@ sidebar_position: 2
 ## مثال درخواست با فیلتر
 
 ```bash
-GET /api/v1/market/orders?symbol=BTCIRT&status=NEW&page=1&page_size=20
+GET /api/v1/market/orders/?symbol=BTCIRT&status=NEW&page=1&limit=20
 Authorization: Token YOUR_TOKEN
 ```
 
@@ -69,7 +63,7 @@ Authorization: Token YOUR_TOKEN
 ```json
 {
   "count": 150,
-  "next": "/api/v1/market/orders?page=2",
+  "next": "/api/v1/market/orders/?page=2",
   "previous": null,
   "results": [
     {
