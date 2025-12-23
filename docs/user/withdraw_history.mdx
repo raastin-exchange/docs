@@ -1,0 +1,171 @@
+---
+sidebar_position: 3
+sidebar_label: تاریخچه برداشت
+description: "📤 دریافت لیست تاریخچه برداشت‌های ارز دیجیتال"
+---
+
+# تاریخچه برداشت
+
+<div dir="ltr" style={{textAlign: 'left'}}>
+
+    GET /api/v1/withdraws/
+
+</div>
+
+
+این API برای دریافت لیست تاریخچه برداشت‌های ارز دیجیتال استفاده می‌شود. نتایج به صورت صفحه‌بندی شده برگردانده می‌شوند. برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
+
+## پارامترهای Query (اختیاری)
+
+| نام پارامتر | نوع     | توضیح                                                  |
+| ----------- | ------- | ------------------------------------------------------ |
+| coin        | String  | نماد ارز برای فیلتر کردن (مثال: BTC، ETH، USDT)        |
+| status      | String  | وضعیت برداشت (INIT، PROCESS، DONE، CANCELED)           |
+| limit       | Integer | تعداد نتایج (پیش‌فرض: 20)                              |
+| offset      | Integer | شروع از رکورد چندم (پیش‌فرض: 0)                        |
+
+## ساختار پاسخ
+
+| نام پارامتر | نوع     | توضیحات                                  |
+| ----------- | ------- | ---------------------------------------- |
+| count       | Integer | تعداد کل برداشت‌ها                       |
+| next        | String  | لینک صفحه بعدی (null اگر صفحه آخر باشد)  |
+| previous    | String  | لینک صفحه قبلی (null اگر صفحه اول باشد)  |
+| results     | Array   | آرایه‌ای از برداشت‌ها                    |
+
+### ساختار هر برداشت در results
+
+| نام پارامتر    | نوع     | توضیحات                                       |
+| -------------- | ------- | --------------------------------------------- |
+| id             | Integer | شناسه برداشت                                  |
+| created        | String  | تاریخ و زمان ایجاد                            |
+| amount         | String  | مقدار برداشت                                  |
+| status         | String  | وضعیت برداشت (INIT/PROCESS/DONE/CANCELED)     |
+| link           | String  | لینک مشاهده تراکنش در Explorer                |
+| out_address    | String  | آدرس مقصد برداشت                              |
+| memo           | String  | ممو/تگ (در صورت نیاز شبکه)                    |
+| asset          | Object  | اطلاعات ارز                                   |
+| network        | String  | نماد شبکه بلاکچین                             |
+| trx_hash       | String  | هش تراکنش (Transaction Hash)                  |
+| fee_amount     | String  | مقدار کارمزد برداشت                           |
+| is_internal    | Boolean | آیا انتقال داخلی است                          |
+| cancelable     | Boolean | آیا قابل لغو است                              |
+| freeze_seconds | Integer | مدت زمان توقف قبل از پردازش (ثانیه)           |
+| min_confirm    | Integer | حداقل تاییدیه مورد نیاز                       |
+| unlock_confirm | Integer | تعداد تاییدیه برای آزادسازی                   |
+| confirmation   | Integer | تعداد تاییدیه‌های فعلی                        |
+
+### ساختار asset
+
+| نام پارامتر | نوع    | توضیحات     |
+| ----------- | ------ | ----------- |
+| symbol      | String | نماد ارز    |
+| name_fa     | String | نام فارسی   |
+| logo        | String | آدرس لوگو   |
+
+## نمونه پاسخ
+
+<div dir="ltr">
+
+```json
+{
+  "count": 15,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 5678,
+      "created": "2025-12-23T10:30:15.793602+03:30",
+      "amount": "100",
+      "status": "DONE",
+      "link": "https://tronscan.org/#/transaction/a1b2c3d4e5f6...",
+      "out_address": "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6",
+      "memo": null,
+      "asset": {
+        "symbol": "USDT",
+        "name_fa": "تتر",
+        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/USDT.png"
+      },
+      "network": "TRC20",
+      "trx_hash": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
+      "fee_amount": "1",
+      "is_internal": false,
+      "cancelable": false,
+      "freeze_seconds": 30,
+      "min_confirm": 20,
+      "unlock_confirm": 20,
+      "confirmation": 20
+    },
+    {
+      "id": 5677,
+      "created": "2025-12-22T14:20:30.123456+03:30",
+      "amount": "0.01",
+      "status": "PROCESS",
+      "link": null,
+      "out_address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      "memo": null,
+      "asset": {
+        "symbol": "BTC",
+        "name_fa": "بیت کوین",
+        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/BTC.png"
+      },
+      "network": "BTC",
+      "trx_hash": null,
+      "fee_amount": "0.0001",
+      "is_internal": false,
+      "cancelable": false,
+      "freeze_seconds": 30,
+      "min_confirm": 3,
+      "unlock_confirm": 3,
+      "confirmation": 0
+    },
+    {
+      "id": 5676,
+      "created": "2025-12-21T09:15:45.654321+03:30",
+      "amount": "50",
+      "status": "INIT",
+      "link": null,
+      "out_address": "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6",
+      "memo": null,
+      "asset": {
+        "symbol": "USDT",
+        "name_fa": "تتر",
+        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/USDT.png"
+      },
+      "network": "TRC20",
+      "trx_hash": null,
+      "fee_amount": "1",
+      "is_internal": false,
+      "cancelable": true,
+      "freeze_seconds": 30,
+      "min_confirm": 20,
+      "unlock_confirm": 20,
+      "confirmation": 0
+    }
+  ]
+}
+```
+
+</div>
+
+:::tip نکات مهم
+
+### وضعیت‌های برداشت
+
+- **INIT**: درخواست برداشت ثبت شده و در انتظار پردازش است (قابل لغو)
+- **PROCESS**: برداشت در حال پردازش است
+- **DONE**: برداشت با موفقیت انجام شده است
+- **CANCELED**: برداشت لغو شده است
+
+### قابلیت لغو (cancelable)
+
+- برداشت‌ها فقط در وضعیت **INIT** قابل لغو هستند
+- پس از شروع پردازش، امکان لغو وجود ندارد
+- `freeze_seconds` مدت زمانی است که برداشت قبل از پردازش متوقف می‌ماند (30 ثانیه)
+
+### کارمزد برداشت
+
+- کارمزد برداشت (`fee_amount`) بسته به شبکه متفاوت است
+- کارمزد از مقدار برداشت کسر می‌شود
+
+:::
