@@ -11,17 +11,34 @@ import TabItem from '@theme/TabItem';
 
 <div dir="ltr" style={{textAlign: 'left'}}>
 
-    GET /api/v1/wallets
+    GET /api/v1/wallets/
 
 </div>
 
-:::info توضیح
+این API برای دریافت لیست تمام کیف پول‌های کاربر استفاده می‌شود. اطلاعات شامل موجودی، موجودی قفل شده، و ارزش تومانی و تتری دارایی‌ها است. برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
 
-این API برای دریافت لیست تمام کیف پول‌های کاربر استفاده می‌شود. اطلاعات شامل موجودی، موجودی قفل شده، و ارزش تومانی و تتری دارایی‌ها است.
+## ساختار پاسخ
 
-برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
-
-:::
+| نام پارامتر | نوع | توضیحات | نمونه |
+|-------------|--------|------------------|-----------|
+| symbol | String | نماد ارز | "BTC" |
+| precision | Integer | تعداد رقم اعشار | 8 |
+| free | String | موجودی آزاد (قابل برداشت) | "8.17096713" |
+| free_irt | String | ارزش موجودی آزاد به تومان | "96353803843" |
+| balance | String | موجودی کل | "8.17306713" |
+| balance_irt | String | ارزش موجودی کل به تومان | "96378567495" |
+| balance_usdt | String | ارزش موجودی کل به تتر | "716257.36" |
+| can_deposit | Boolean | امکان واریز | true |
+| can_withdraw | Boolean | امکان برداشت | true |
+| trade_enable | Boolean | امکان معامله | true |
+| pin_to_top | Boolean | پین شده در بالای لیست | false |
+| market_irt_enable | Boolean | فعال بودن بازار تومانی | true |
+| name | String | نام انگلیسی ارز | "bitcoin" |
+| name_fa | String | نام فارسی ارز | "بیت‌کوین" |
+| logo | String | آدرس لوگو | "https://..." |
+| original_symbol | String | نماد اصلی | "BTC" |
+| original_name_fa | String | نام فارسی اصلی | "بیت‌کوین" |
+| step_size | Integer | دقت مقدار در سفارش | 8 |
 
 ```mdx-code-block
 <Tabs
@@ -34,7 +51,7 @@ import TabItem from '@theme/TabItem';
 ```
 
 ```bash
-GET /api/v1/wallets
+GET /api/v1/wallets/
 Authorization: Token YOUR_TOKEN
 ```
 
@@ -47,48 +64,63 @@ Authorization: Token YOUR_TOKEN
 [
     {
         "symbol": "BTC",
-        "name": "بیت کوین",
-        "name_en": "Bitcoin",
-        "balance": "0.15",
-        "locked": "0.05",
-        "free": "0.1",
-        "balance_irt": "5250000000",
-        "balance_usdt": "1500",
+        "precision": 8,
+        "free": "8.17096713",
+        "free_irt": "96353803843",
+        "balance": "8.17306713",
+        "balance_irt": "96378567495",
+        "balance_usdt": "716257.36",
         "can_deposit": true,
         "can_withdraw": true,
-        "precision": 8,
-        "icon": "https://raastin.com/media/assets/btc.png",
-        "color": "#F7931A"
+        "trade_enable": true,
+        "pin_to_top": false,
+        "market_irt_enable": true,
+        "name": "bitcoin",
+        "name_fa": "بیت‌کوین",
+        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/BTC.png",
+        "original_symbol": "BTC",
+        "original_name_fa": "بیت‌کوین",
+        "step_size": 8
     },
     {
         "symbol": "ETH",
-        "name": "اتریوم",
-        "name_en": "Ethereum",
-        "balance": "2.5",
-        "locked": "0.5",
-        "free": "2",
-        "balance_irt": "300000000",
-        "balance_usdt": "85.71",
+        "precision": 8,
+        "free": "9.62590636",
+        "free_irt": "3827104149",
+        "balance": "9.73590636",
+        "balance_irt": "3870838364",
+        "balance_usdt": "28623.56",
         "can_deposit": true,
         "can_withdraw": true,
-        "precision": 8,
-        "icon": "https://raastin.com/media/assets/eth.png",
-        "color": "#627EEA"
+        "trade_enable": true,
+        "pin_to_top": false,
+        "market_irt_enable": true,
+        "name": "ethereum",
+        "name_fa": "اتریوم",
+        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/ETH.png",
+        "original_symbol": "ETH",
+        "original_name_fa": "اتریوم",
+        "step_size": 8
     },
     {
         "symbol": "IRT",
-        "name": "تومان",
-        "name_en": "Iranian Rial",
-        "balance": "10000000",
-        "locked": "2000000",
-        "free": "8000000",
-        "balance_irt": "10000000",
-        "balance_usdt": "2.857",
+        "precision": 0,
+        "free": "2937911559",
+        "free_irt": "2937911559",
+        "balance": "3323493818",
+        "balance_irt": "3323493818",
+        "balance_usdt": "24692",
         "can_deposit": true,
         "can_withdraw": true,
-        "precision": 0,
-        "icon": "https://raastin.com/media/assets/irt.png",
-        "color": "#00A651"
+        "trade_enable": true,
+        "pin_to_top": true,
+        "market_irt_enable": false,
+        "name": "irt",
+        "name_fa": "تومان",
+        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/IRT.png",
+        "original_symbol": "IRT",
+        "original_name_fa": "تومان",
+        "step_size": 8
     }
 ]
 ```
@@ -103,18 +135,37 @@ Authorization: Token YOUR_TOKEN
 
 <div dir="ltr" style={{textAlign: 'left'}}>
 
-    GET /api/v1/wallets/&#123;symbol&#125;
+    GET /api/v1/wallets/&#123;symbol&#125;/
 
 </div>
 
-:::info توضیح
-
-این API برای دریافت اطلاعات جزئی یک کیف پول خاص استفاده می‌شود.
+این API برای دریافت اطلاعات جزئی یک کیف پول خاص استفاده می‌شود. این endpoint علاوه بر اطلاعات کیف پول، اطلاعات کامل شبکه‌های قابل استفاده برای واریز و برداشت را نیز برمی‌گرداند. برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
 
 **پارامتر مسیر:**
-- `symbol`: نماد ارز (مثال: BTC، ETH، IRT)
+- `symbol`: نماد ارز (مثال: BTC، ETH، USDT)
 
-:::
+### ساختار networks
+
+هر شبکه شامل اطلاعات زیر است:
+
+| نام پارامتر | نوع | توضیحات |
+|-------------|--------|------------------|
+| network | String | نماد شبکه |
+| address | String | آدرس واریز (null اگر هنوز ایجاد نشده) |
+| memo | String | ممو واریز (برای شبکه‌هایی که نیاز دارند) |
+| can_deposit | Boolean | امکان واریز در این شبکه |
+| can_withdraw | Boolean | امکان برداشت از این شبکه |
+| withdraw_fee_value | String | کارمزد برداشت |
+| min_withdraw | String | حداقل مقدار برداشت |
+| min_deposit | String | حداقل مقدار واریز |
+| network_name | String | نام کامل شبکه |
+| address_regex | String | الگوی اعتبارسنجی آدرس |
+| withdraw_precision | Integer | دقت مقدار برداشت |
+| need_memo | Boolean | نیاز به ممو برای برداشت |
+| min_confirm | Integer | حداقل تاییدیه برای واریز |
+| contract | String | آدرس قرارداد توکن |
+| contract_link | String | لینک قرارداد در Explorer |
+| arrival_time | Integer | زمان تقریبی رسیدن (به ساعت) |
 
 
 ```mdx-code-block
@@ -128,7 +179,7 @@ Authorization: Token YOUR_TOKEN
 ```
 
 ```bash
-GET /api/v1/wallets/BTC
+GET /api/v1/wallets/USDT/
 Authorization: Token YOUR_TOKEN
 ```
 
@@ -139,19 +190,78 @@ Authorization: Token YOUR_TOKEN
 
 ```json
 {
-    "symbol": "BTC",
-    "name": "بیت کوین",
-    "name_en": "Bitcoin",
-    "balance": "0.15",
-    "locked": "0.05",
-    "free": "0.1",
-    "balance_irt": "5250000000",
-    "balance_usdt": "1500",
+    "symbol": "USDT",
+    "precision": 8,
+    "free": "915875297256.43972526",
+    "free_irt": "123274067384825017",
+    "balance": "915875297608.43972526",
+    "balance_irt": "123274067432203161",
+    "balance_usdt": "915875297608.43",
     "can_deposit": true,
     "can_withdraw": true,
-    "precision": 8,
-    "icon": "https://raastin.com/media/assets/btc.png",
-    "color": "#F7931A"
+    "trade_enable": true,
+    "pin_to_top": false,
+    "market_irt_enable": true,
+    "name": "tether",
+    "name_fa": "تتر",
+    "logo": "https://cdn.raastin.com/core-media-public/coins/logo/USDT.png",
+    "original_symbol": "USDT",
+    "original_name_fa": "تتر",
+    "step_size": 8,
+    "networks": [
+        {
+            "network": "TRX",
+            "address": "TLjKytefz1kYk7D986ySvygbMeMda8c87o",
+            "memo": "",
+            "can_deposit": true,
+            "can_withdraw": true,
+            "withdraw_commission": "1",
+            "withdraw_fee_value": "1",
+            "min_withdraw": "1",
+            "min_deposit": "0.00000001",
+            "network_name": "Tron (TRC20)",
+            "address_regex": "^T[1-9A-HJ-NP-Za-km-z]{33}$",
+            "memo_regex": "",
+            "withdraw_precision": 0,
+            "need_memo": false,
+            "min_confirm": 100,
+            "slow_withdraw": false,
+            "memo_title_fa": "آدرس تگ یا ممو",
+            "memo_name_fa": "ممو",
+            "memo_name": "memo",
+            "deposit_need_memo": false,
+            "withdraw_allow_memo": false,
+            "contract": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+            "contract_link": "https://tronscan.org/#/token20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+            "arrival_time": 2
+        },
+        {
+            "network": "BSC",
+            "address": "0xb16D1430521f01A5Ae6683485465c303Fc136665",
+            "memo": "",
+            "can_deposit": true,
+            "can_withdraw": true,
+            "withdraw_commission": "1",
+            "withdraw_fee_value": "1",
+            "min_withdraw": "1",
+            "min_deposit": "0.00000001",
+            "network_name": "BNB Smart Chain (BEP20)",
+            "address_regex": "",
+            "memo_regex": "",
+            "withdraw_precision": 1,
+            "need_memo": false,
+            "min_confirm": 100,
+            "slow_withdraw": false,
+            "memo_title_fa": "آدرس تگ یا ممو",
+            "memo_name_fa": "ممو",
+            "memo_name": "memo",
+            "deposit_need_memo": false,
+            "withdraw_allow_memo": false,
+            "contract": "0x55d398326f99059ff775485246999027b3197955",
+            "contract_link": "https://bscscan.com/token/0x55d398326f99059ff775485246999027b3197955",
+            "arrival_time": 2
+        }
+    ]
 }
 ```
 
@@ -165,18 +275,14 @@ Authorization: Token YOUR_TOKEN
 
 <div dir="ltr" style={{textAlign: 'left'}}>
 
-    GET /api/v1/wallets/&#123;symbol&#125;/balance
+    GET /api/v1/wallets/&#123;symbol&#125;/balance/
 
 </div>
 
-:::info توضیح
-
-این API برای دریافت سریع موجودی یک کیف پول خاص استفاده می‌شود. اطلاعات کمتری نسبت به endpoint بالا برمی‌گرداند و سریع‌تر است.
+این API برای دریافت سریع موجودی یک کیف پول خاص استفاده می‌شود. اطلاعات کمتری نسبت به endpoint بالا برمی‌گرداند و سریع‌تر است. برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
 
 **پارامتر مسیر:**
-- `symbol`: نماد ارز (مثال: BTC، ETH، IRT)
-
-:::
+- `symbol`: نماد ارز (مثال: BTC، ETH، USDT)
 
 
 ```mdx-code-block
@@ -190,7 +296,7 @@ Authorization: Token YOUR_TOKEN
 ```
 
 ```bash
-GET /api/v1/wallets/BTC/balance
+GET /api/v1/wallets/USDT/balance/
 Authorization: Token YOUR_TOKEN
 ```
 
@@ -201,9 +307,9 @@ Authorization: Token YOUR_TOKEN
 
 ```json
 {
-    "symbol": "BTC",
-    "asset": "BTC",
-    "balance": "0.1"
+    "symbol": "USDT",
+    "asset": "USDT",
+    "balance": "915875297256.43972526"
 }
 ```
 

@@ -53,14 +53,24 @@ description: "📤 دریافت لیست تاریخچه برداشت‌های ا
 | min_confirm    | Integer | حداقل تاییدیه مورد نیاز                   |
 | unlock_confirm | Integer | تعداد تاییدیه برای آزادسازی               |
 | confirmation   | Integer | تعداد تاییدیه‌های فعلی                    |
+| memo_name_fa   | String  | عنوان فارسی ممو                           |
 
 ### ساختار asset
 
-| نام پارامتر | نوع    | توضیحات   |
-| ----------- | ------ | --------- |
-| symbol      | String | نماد ارز  |
-| name_fa     | String | نام فارسی |
-| logo        | String | آدرس لوگو |
+| نام پارامتر | نوع    | توضیحات          |
+| ----------- | ------ | ---------------- |
+| id          | Integer| شناسه ارز        |
+| symbol      | String | نماد ارز         |
+| precision   | Integer| تعداد رقم اعشار  |
+| step_size   | Integer| دقت مقدار        |
+| name        | String | نام انگلیسی      |
+| name_fa     | String | نام فارسی        |
+| logo        | String | آدرس لوگو        |
+| original_symbol | String | نماد اصلی    |
+| original_name_fa | String | نام فارسی اصلی |
+| trading_view_symbol | String | نماد TradingView |
+| otc_status  | String | وضعیت OTC        |
+| price_page  | Boolean| نمایش در صفحه قیمت |
 
 ## نمونه پاسخ
 
@@ -68,80 +78,77 @@ description: "📤 دریافت لیست تاریخچه برداشت‌های ا
 
 ```json
 {
-  "count": 15,
-  "next": null,
-  "previous": null,
-  "results": [
-    {
-      "id": 5678,
-      "created": "2025-12-23T10:30:15.793602+03:30",
-      "amount": "100",
-      "status": "done",
-      "link": "https://tronscan.org/#/transaction/a1b2c3d4e5f6...",
-      "out_address": "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6",
-      "memo": null,
-      "asset": {
-        "symbol": "USDT",
-        "name_fa": "تتر",
-        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/USDT.png"
-      },
-      "network": "TRC20",
-      "trx_hash": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
-      "fee_amount": "1",
-      "is_internal": false,
-      "cancelable": false,
-      "freeze_seconds": 30,
-      "min_confirm": 20,
-      "unlock_confirm": 20,
-      "confirmation": 20
-    },
-    {
-      "id": 5677,
-      "created": "2025-12-22T14:20:30.123456+03:30",
-      "amount": "0.01",
-      "status": "PROCESS",
-      "link": null,
-      "out_address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-      "memo": null,
-      "asset": {
-        "symbol": "BTC",
-        "name_fa": "بیت کوین",
-        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/BTC.png"
-      },
-      "network": "BTC",
-      "trx_hash": null,
-      "fee_amount": "0.0001",
-      "is_internal": false,
-      "cancelable": false,
-      "freeze_seconds": 30,
-      "min_confirm": 3,
-      "unlock_confirm": 3,
-      "confirmation": 0
-    },
-    {
-      "id": 5676,
-      "created": "2025-12-21T09:15:45.654321+03:30",
-      "amount": "50",
-      "status": "init",
-      "link": null,
-      "out_address": "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6",
-      "memo": null,
-      "asset": {
-        "symbol": "USDT",
-        "name_fa": "تتر",
-        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/USDT.png"
-      },
-      "network": "TRC20",
-      "trx_hash": null,
-      "fee_amount": "1",
-      "is_internal": false,
-      "cancelable": true,
-      "freeze_seconds": 30,
-      "min_confirm": 20,
-      "unlock_confirm": 20,
-      "confirmation": 0
-    }
-  ]
+    "count": 440,
+    "next": "http://api.raastin.com/api/v1/withdraws/?limit=20&offset=20",
+    "previous": null,
+    "results": [
+        {
+            "id": 898,
+            "created": "2025-12-03T13:42:10.529176+03:30",
+            "amount": "10",
+            "status": "canceled",
+            "link": "",
+            "out_address": "TBia4uHnb3oSSZm5isP284cA7Np1v15Vhi",
+            "memo": "",
+            "asset": {
+                "id": 18,
+                "symbol": "TRX",
+                "precision": 8,
+                "step_size": 8,
+                "name": "tron",
+                "name_fa": "ترون",
+                "logo": "https://cdn.raastin.com/core-media-public/coins/logo/TRX.png",
+                "original_symbol": "TRX",
+                "original_name_fa": "ترون",
+                "trading_view_symbol": "",
+                "otc_status": "active",
+                "price_page": true
+            },
+            "network": "TRX",
+            "trx_hash": "",
+            "fee_amount": "1",
+            "is_internal": false,
+            "cancelable": false,
+            "freeze_seconds": 30,
+            "min_confirm": 100,
+            "unlock_confirm": 0,
+            "confirmation": 0,
+            "memo_name_fa": "ممو"
+        },
+        {
+            "id": 896,
+            "created": "2025-12-03T13:10:51.673980+03:30",
+            "amount": "4",
+            "status": "canceled",
+            "link": "",
+            "out_address": "TMHV5r7LZCfyTuSzdyprD3utQNYDAbiUYS",
+            "memo": "",
+            "asset": {
+                "id": 2,
+                "symbol": "USDT",
+                "precision": 8,
+                "step_size": 8,
+                "name": "tether",
+                "name_fa": "تتر",
+                "logo": "https://cdn.raastin.com/core-media-public/coins/logo/USDT.png",
+                "original_symbol": "USDT",
+                "original_name_fa": "تتر",
+                "trading_view_symbol": "",
+                "otc_status": "active",
+                "price_page": true
+            },
+            "network": "TRX",
+            "trx_hash": "",
+            "fee_amount": "1",
+            "is_internal": false,
+            "cancelable": false,
+            "freeze_seconds": 30,
+            "min_confirm": 100,
+            "unlock_confirm": 0,
+            "confirmation": 0,
+            "memo_name_fa": "ممو"
+        }
+    ]
 }
 ```
 
