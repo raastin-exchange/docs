@@ -2,8 +2,8 @@
 sidebar_position: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # تاریخچه واریز
 
@@ -13,64 +13,66 @@ import TabItem from '@theme/TabItem';
 
 </div>
 
-این API برای دریافت لیست تاریخچه واریزهای ارز دیجیتال استفاده می‌شود. نتایج به صورت صفحه‌بندی شده برگردانده می‌شوند. برای استفاده از این API لازم است توکن احراز هویت در header ارسال شود.
+این API برای دریافت فهرست تاریخچه واریزهای ارز دیجیتال استفاده می‌شود. نتایج به‌صورت **صفحه‌بندی‌شده** بازگردانده می‌شوند.
+
+برای استفاده از این API، لازم است توکن احراز هویت در بخش **Header** درخواست ارسال شود.
 
 ## پارامترهای Query (اختیاری)
 
-| نام پارامتر | نوع    | اجباری | توضیح                                           | نمونه       |
-|-------------|--------|--------|-------------------------------------------------|-------------|
-| coin        | String | False  | نماد ارز برای فیلتر کردن                        | "BTC"       |
-| status      | String | False  | وضعیت واریز (process, done)                     | "done"      |
-| limit       | Integer| False  | تعداد نتایج (پیش‌فرض: 20)                       | 20          |
-| offset      | Integer| False  | شروع از رکورد چندم (پیش‌فرض: 0)                 | 0           |
+| نام پارامتر | نوع     | اجباری | توضیح                           | نمونه  |
+| ----------- | ------- | ------ | ------------------------------- | ------ |
+| coin        | String  | False  | نماد ارز برای فیلتر کردن        | "BTC"  |
+| status      | String  | False  | وضعیت واریز (process, done)     | "done" |
+| limit       | Integer | False  | تعداد نتایج (پیش‌فرض: 20)       | 20     |
+| offset      | Integer | False  | شروع از رکورد چندم (پیش‌فرض: 0) | 0      |
 
 ## ساختار پاسخ
 
 **پاسخ صفحه‌بندی شده:**
 
-| نام پارامتر | نوع    | توضیحات                                          | نمونه                                    |
-|-------------|--------|--------------------------------------------------|------------------------------------------|
-| count       | Integer| تعداد کل واریزها                                 | 25                                       |
-| next        | String | لینک صفحه بعدی (null اگر صفحه آخر باشد)         | "/api/v1/deposit/list?limit=20&offset=20"|
-| previous    | String | لینک صفحه قبلی (null اگر صفحه اول باشد)         | null                                     |
-| results     | Array  | آرایه‌ای از واریزها                              | [...]                                    |
+| نام پارامتر | نوع     | توضیحات                                 | نمونه                                     |
+| ----------- | ------- | --------------------------------------- | ----------------------------------------- |
+| count       | Integer | تعداد کل واریزها                        | 25                                        |
+| next        | String  | لینک صفحه بعدی (null اگر صفحه آخر باشد) | "/api/v1/deposit/list?limit=20&offset=20" |
+| previous    | String  | لینک صفحه قبلی (null اگر صفحه اول باشد) | null                                      |
+| results     | Array   | آرایه‌ای از واریزها                     | [...]                                     |
 
 **ساختار هر واریز در results:**
 
-| نام پارامتر   | نوع     | توضیحات                                        | نمونه                                                    |
-|---------------|---------|------------------------------------------------|----------------------------------------------------------|
-| id            | Integer | شناسه واریز                                     | 12345                                                    |
-| created       | String  | تاریخ و زمان ایجاد                              | "2024-12-10T17:03:57.002570+03:30"                       |
-| amount        | String  | مقدار واریز                                     | "0.05"                                                   |
-| status        | String  | وضعیت واریز (PROCESS/DONE)                      | "DONE"                                                   |
-| link          | String  | لینک مشاهده تراکنش در Explorer                  | "https://blockchair.com/bitcoin/transaction/..."         |
-| out_address   | String  | آدرس واریز                                      | "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"            |
-| memo          | String  | ممو/تگ (در صورت نیاز شبکه)                     | null                                                     |
-| asset         | Object  | اطلاعات ارز واریزی                              | `{"symbol": "BTC", ...}`                                |
-| network       | String  | نماد شبکه بلاکچین                               | "BTC"                                                    |
-| trx_hash      | String  | هش تراکنش (Transaction Hash)                    | "a1b2c3d4e5f6..."                                        |
-| fee_amount    | String  | مقدار کارمزد                                    | "0"                                                      |
-| is_internal   | Boolean | آیا انتقال داخلی است                            | false                                                    |
-| confirmation  | Integer | تعداد تاییدیه‌های شبکه                          | 6                                                        |
-| min_confirm   | Integer | حداقل تاییدیه مورد نیاز                         | 3                                                        |
-| unlock_confirm| Integer | تعداد تاییدیه برای آزادسازی                     | 3                                                        |
+| نام پارامتر    | نوع     | توضیحات                        | نمونه                                            |
+| -------------- | ------- | ------------------------------ | ------------------------------------------------ |
+| id             | Integer | شناسه واریز                    | 12345                                            |
+| created        | String  | تاریخ و زمان ایجاد             | "2024-12-10T17:03:57.002570+03:30"               |
+| amount         | String  | مقدار واریز                    | "0.05"                                           |
+| status         | String  | وضعیت واریز (PROCESS/DONE)     | "DONE"                                           |
+| link           | String  | لینک مشاهده تراکنش در Explorer | "https://blockchair.com/bitcoin/transaction/..." |
+| out_address    | String  | آدرس واریز                     | "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"     |
+| memo           | String  | ممو/تگ (در صورت نیاز شبکه)     | null                                             |
+| asset          | Object  | اطلاعات ارز واریزی             | `{"symbol": "BTC", ...}`                         |
+| network        | String  | نماد شبکه بلاکچین              | "BTC"                                            |
+| trx_hash       | String  | هش تراکنش (Transaction Hash)   | "a1b2c3d4e5f6..."                                |
+| fee_amount     | String  | مقدار کارمزد                   | "0"                                              |
+| is_internal    | Boolean | آیا انتقال داخلی است           | false                                            |
+| confirmation   | Integer | تعداد تاییدیه‌های شبکه         | 6                                                |
+| min_confirm    | Integer | حداقل تاییدیه مورد نیاز        | 3                                                |
+| unlock_confirm | Integer | تعداد تاییدیه برای آزادسازی    | 3                                                |
 
 **ساختار asset:**
 
-| نام پارامتر | نوع    | توضیحات          | نمونه     |
-|-------------|--------|------------------|-----------|
-| id          | Integer| شناسه ارز        | 2         |
-| symbol      | String | نماد ارز         | "USDT"    |
-| precision   | Integer| تعداد رقم اعشار  | 8         |
-| step_size   | Integer| دقت مقدار        | 8         |
-| name        | String | نام انگلیسی      | "tether"  |
-| name_fa     | String | نام فارسی        | "تتر"     |
-| logo        | String | آدرس لوگو        | "..."     |
-| original_symbol | String | نماد اصلی    | "USDT"    |
-| original_name_fa | String | نام فارسی اصلی | "تتر"   |
-| trading_view_symbol | String | نماد TradingView | ""   |
-| otc_status  | String | وضعیت OTC        | "active"  |
-| price_page  | Boolean| نمایش در صفحه قیمت | true    |
+| نام پارامتر         | نوع     | توضیحات            | نمونه    |
+| ------------------- | ------- | ------------------ | -------- |
+| id                  | Integer | شناسه ارز          | 2        |
+| symbol              | String  | نماد ارز           | "USDT"   |
+| precision           | Integer | تعداد رقم اعشار    | 8        |
+| step_size           | Integer | دقت مقدار          | 8        |
+| name                | String  | نام انگلیسی        | "tether" |
+| name_fa             | String  | نام فارسی          | "تتر"    |
+| logo                | String  | آدرس لوگو          | "..."    |
+| original_symbol     | String  | نماد اصلی          | "USDT"   |
+| original_name_fa    | String  | نام فارسی اصلی     | "تتر"    |
+| trading_view_symbol | String  | نماد TradingView   | ""       |
+| otc_status          | String  | وضعیت OTC          | "active" |
+| price_page          | Boolean | نمایش در صفحه قیمت | true     |
 
 ```mdx-code-block
 <Tabs
@@ -83,18 +85,21 @@ values={[
 ```
 
 **مثال 1: دریافت همه واریزها:**
+
 ```bash
 GET /api/v1/deposit/list/
 Authorization: Token YOUR_TOKEN
 ```
 
 **مثال 2: فیلتر بر اساس ارز:**
+
 ```bash
 GET /api/v1/deposit/list/?coin=BTC
 Authorization: Token YOUR_TOKEN
 ```
 
 **مثال 3: فیلتر بر اساس وضعیت:**
+
 ```bash
 GET /api/v1/deposit/list/?status=done
 Authorization: Token YOUR_TOKEN
@@ -107,77 +112,77 @@ Authorization: Token YOUR_TOKEN
 
 ```json
 {
-    "count": 9,
-    "next": null,
-    "previous": null,
-    "results": [
-        {
-            "id": 620,
-            "created": "2024-12-16T11:53:42.029467+03:30",
-            "amount": "18",
-            "status": "done",
-            "link": "https://tronscan.org/#/transaction/112ff7f9c63fc169eedefa63710a76f3008edccb9696cfe8bbe9e56edc28841d",
-            "out_address": "TLFyFdjJEyTg3qNFFjqgW6WYSm3U4TJzny",
-            "memo": "",
-            "asset": {
-                "id": 2,
-                "symbol": "USDT",
-                "precision": 8,
-                "step_size": 8,
-                "name": "tether",
-                "name_fa": "تتر",
-                "logo": "https://cdn.raastin.com/core-media-public/coins/logo/USDT.png",
-                "original_symbol": "USDT",
-                "original_name_fa": "تتر",
-                "trading_view_symbol": "",
-                "otc_status": "active",
-                "price_page": true
-            },
-            "network": "TRX",
-            "trx_hash": "112ff7f9c63fc169eedefa63710a76f3008edccb9696cfe8bbe9e56edc28841d",
-            "fee_amount": "0",
-            "is_internal": false,
-            "cancelable": false,
-            "freeze_seconds": 30,
-            "min_confirm": 100,
-            "unlock_confirm": 0,
-            "confirmation": 100,
-            "memo_name_fa": "ممو"
-        },
-        {
-            "id": 693,
-            "created": "2025-01-29T16:47:45.086190+03:30",
-            "amount": "2",
-            "status": "done",
-            "link": "",
-            "out_address": "0922****222",
-            "memo": "",
-            "asset": {
-                "id": 36,
-                "symbol": "NEAR",
-                "precision": 8,
-                "step_size": 8,
-                "name": "NEAR",
-                "name_fa": "",
-                "logo": null,
-                "original_symbol": "NEAR",
-                "original_name_fa": "",
-                "trading_view_symbol": "",
-                "otc_status": "active",
-                "price_page": true
-            },
-            "network": null,
-            "trx_hash": "internal_account: <e0eef554-26ea-4fbf-9164-721cb8174f34>",
-            "fee_amount": "0",
-            "is_internal": true,
-            "cancelable": false,
-            "freeze_seconds": 30,
-            "min_confirm": null,
-            "unlock_confirm": null,
-            "confirmation": 0,
-            "memo_name_fa": ""
-        }
-    ]
+  "count": 9,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 620,
+      "created": "2024-12-16T11:53:42.029467+03:30",
+      "amount": "18",
+      "status": "done",
+      "link": "https://tronscan.org/#/transaction/112ff7f9c63fc169eedefa63710a76f3008edccb9696cfe8bbe9e56edc28841d",
+      "out_address": "TLFyFdjJEyTg3qNFFjqgW6WYSm3U4TJzny",
+      "memo": "",
+      "asset": {
+        "id": 2,
+        "symbol": "USDT",
+        "precision": 8,
+        "step_size": 8,
+        "name": "tether",
+        "name_fa": "تتر",
+        "logo": "https://cdn.raastin.com/core-media-public/coins/logo/USDT.png",
+        "original_symbol": "USDT",
+        "original_name_fa": "تتر",
+        "trading_view_symbol": "",
+        "otc_status": "active",
+        "price_page": true
+      },
+      "network": "TRX",
+      "trx_hash": "112ff7f9c63fc169eedefa63710a76f3008edccb9696cfe8bbe9e56edc28841d",
+      "fee_amount": "0",
+      "is_internal": false,
+      "cancelable": false,
+      "freeze_seconds": 30,
+      "min_confirm": 100,
+      "unlock_confirm": 0,
+      "confirmation": 100,
+      "memo_name_fa": "ممو"
+    },
+    {
+      "id": 693,
+      "created": "2025-01-29T16:47:45.086190+03:30",
+      "amount": "2",
+      "status": "done",
+      "link": "",
+      "out_address": "0922****222",
+      "memo": "",
+      "asset": {
+        "id": 36,
+        "symbol": "NEAR",
+        "precision": 8,
+        "step_size": 8,
+        "name": "NEAR",
+        "name_fa": "",
+        "logo": null,
+        "original_symbol": "NEAR",
+        "original_name_fa": "",
+        "trading_view_symbol": "",
+        "otc_status": "active",
+        "price_page": true
+      },
+      "network": null,
+      "trx_hash": "internal_account: <e0eef554-26ea-4fbf-9164-721cb8174f34>",
+      "fee_amount": "0",
+      "is_internal": true,
+      "cancelable": false,
+      "freeze_seconds": 30,
+      "min_confirm": null,
+      "unlock_confirm": null,
+      "confirmation": 0,
+      "memo_name_fa": ""
+    }
+  ]
 }
 ```
 
@@ -202,6 +207,7 @@ Authorization: Token YOUR_TOKEN
 ### شبکه‌های مختلف:
 
 برخی ارزها مثل USDT در چند شبکه قابل واریز هستند:
+
 - TRX (Tron - TRC20)
 - ETH (Ethereum - ERC20)
 - BSC (BNB Smart Chain - BEP20)
