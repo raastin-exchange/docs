@@ -1,0 +1,108 @@
+---
+sidebar_position: 4
+sidebar_label: بازیابی، اصلاح و لغو
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# عملیات تک‌سفارش — Get / Modify / Cancel
+
+تمام عملیات تک‌سفارش با `orderId` (شناسه سرور) یا `clientOrderId` (شناسه ارسالی کلاینت) قابل ارجاع‌اند.
+
+## GET /api/v2/orders/{`orderId`}
+
+بازیابی یک سفارش با شناسه سرور.
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "orderId": "20005",
+  "clientOrderId": "my-bot-42",
+  "symbol": "BTCUSDT",
+  "marketType": "SPOT",
+  "side": "BUY",
+  "type": "LIMIT",
+  "timeInForce": "GTC",
+  "status": "PARTIALLY_FILLED",
+  "price": "45000.00",
+  "origQty": "0.00100000",
+  "executedQty": "0.00040000",
+  "cummulativeQuoteQty": "18.00",
+  "avgPrice": "45000.00",
+  "createdAt": 1714560000000,
+  "updatedAt": 1714560015000
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## GET /api/v2/orders?clientOrderId=...
+
+بازیابی با شناسه‌ی کلاینت. اگر همان `clientOrderId` در نمادهای مختلف استفاده شده باشد، با پارامتر `symbol` محدودسازی کنید.
+
+### پارامترهای کوئری
+
+| نام | نوع | اجباری | توضیح |
+| --- | --- | --- | --- |
+| `clientOrderId` | String | ✓ | شناسه ارسالی کلاینت. |
+| `symbol` | String | ✗ | محدودسازی به یک نماد. |
+
+## PUT /api/v2/orders/{`orderId`}
+
+اصلاح قیمت، مقدار، `stopPrice` و TP/SL یک سفارش در حال انتظار.
+
+### پارامترهای بدنه
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `quantity` | String | مقدار جدید سفارش. |
+| `unfilledQty` | String | جایگزین `quantity` — مقدار باقیمانده‌ی هدف. |
+| `price` | String | قیمت جدید. |
+| `stopPrice` | String | برای `STOP_LOSS_LIMIT`. |
+| `takeProfitPrice` | String | رشته‌ی غیرخالی = تنظیم؛ رشته‌ی خالی = حذف. |
+| `stopLossPrice` | String | همان قاعده‌ی `takeProfitPrice`. |
+
+اصلاح TP/SL فقط از طریق این اندپوینت تک‌سفارش پشتیبانی می‌شود؛ batch-modify آن‌ها را رد می‌کند.
+
+## DELETE /api/v2/orders/{`orderId`}
+
+لغو با شناسه سرور.
+
+## DELETE /api/v2/orders?clientOrderId=...
+
+لغو با `clientOrderId`. سرور آخرین سفارشی که با این شناسه تطبیق دارد را لغو می‌کند.
+
+پاسخ هر دو اندپوینت لغو، آخرین وضعیت شناخته‌شده‌ی سفارش است. توجه کنید که عمل لغو ناهمزمان است؛ ممکن است در پاسخ، `status` همچنان `NEW` یا `PENDING_NEW` باشد و چند صد میلی‌ثانیه بعد به `CANCELED` تبدیل شود. ربات‌ها معمولاً وضعیت نهایی را با polling روی [`GET /allOrders`](../order-lists) تأیید می‌کنند.
+
+## DELETE /api/v2/openOrders?symbol=...
+
+لغو **همه‌ی** سفارش‌های فعال (`NEW` و `PENDING_NEW`) روی یک نماد.
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "canceled": 12,
+  "failed": 0
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+:::caution
+این اندپوینت تا 1000 سفارش در یک فراخوانی پردازش می‌کند. اگر تعداد سفارش‌های فعال بیشتر است، فراخوانی را تکرار کنید.
+:::

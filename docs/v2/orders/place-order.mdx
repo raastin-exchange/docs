@@ -1,0 +1,170 @@
+---
+sidebar_position: 3
+sidebar_label: ثبت سفارش
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# ثبت سفارش (Place Order)
+
+<div dir="ltr" style={{textAlign: 'left'}}>
+
+    POST /api/v2/orders
+
+</div>
+
+ثبت یک سفارش جدید (spot یا margin). شکل بدنه‌ی درخواست با مدل‌های رایج صنعت هم‌راستا است؛ تک‌فیلد `marketType` تعیین می‌کند سفارش spot است یا margin، و در حالت margin بلوک `marginParams` مورد نیاز است.
+
+## پارامترهای درخواست
+
+| نام | نوع | اجباری | توضیح |
+| --- | --- | --- | --- |
+| `symbol` | String | ✓ | نماد به فرم فشرده (مثال: `BTCUSDT`، `BTCIRT`). |
+| `marketType` | String | ✓ | `SPOT` یا `MARGIN`. |
+| `side` | String | ✓ | `BUY` یا `SELL`. |
+| `type` | String | ✓ | `LIMIT`، `MARKET`، `STOP_LOSS`، `STOP_LOSS_LIMIT`. |
+| `timeInForce` | String | شرطی | فقط برای `LIMIT` و `STOP_LOSS_LIMIT`. مقادیر: `GTC` (پیش‌فرض)، `IOC`، `FOK`. |
+| `quantity` | String | شرطی | مقدار به ارز پایه. با `quoteOrderQty` متقابل انحصاری است. |
+| `quoteOrderQty` | String | شرطی | فقط برای `MARKET`. مقدار خرج به ارز quote (مانند `100` USDT). به‌جای `quantity` ارسال کنید. |
+| `price` | String | شرطی | برای `LIMIT` و `STOP_LOSS_LIMIT` الزامی. |
+| `stopPrice` | String | شرطی | برای `STOP_LOSS` و `STOP_LOSS_LIMIT` الزامی. |
+| `clientOrderId` | String | ✗ | شناسه اختصاصی کلاینت. روی سفارش‌های `NEW` در هر حساب unique است. |
+| `takeProfitPrice` | String | ✗ | فقط برای `MARGIN`. |
+| `stopLossPrice` | String | ✗ | فقط برای `MARGIN`. |
+| `marginParams` | Object | شرطی | برای `MARGIN` الزامی، برای `SPOT` ممنوع. |
+
+### `marginParams`
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `positionSide` | String | `LONG` یا `SHORT`. |
+| `leverage` | Integer | ضریب (۱ تا ۲۰). |
+| `reduceOnly` | Boolean | برای آینده. |
+| `isOpenPosition` | Boolean | `true` برای باز کردن، `false` برای بستن. |
+| `positionId` | Integer | برای بستن یا افزودن به پوزیشن مشخص. |
+
+## نمونه‌ها
+
+```mdx-code-block
+<Tabs
+    defaultValue="limit"
+    values={[
+        {label:'LIMIT خرید (SPOT)', value:'limit'},
+        {label:'MARKET با quoteOrderQty', value:'quote'},
+        {label:'باز کردن SHORT با TP/SL', value:'margin'},
+        {label:'پاسخ', value:'response'},
+    ]}>
+<TabItem value="limit">
+```
+
+```json
+{
+  "symbol": "BTCUSDT",
+  "marketType": "SPOT",
+  "side": "BUY",
+  "type": "LIMIT",
+  "timeInForce": "GTC",
+  "quantity": "0.001",
+  "price": "45000.00",
+  "clientOrderId": "my-bot-42"
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="quote">
+```
+
+```json
+{
+  "symbol": "BTCUSDT",
+  "marketType": "SPOT",
+  "side": "BUY",
+  "type": "MARKET",
+  "quoteOrderQty": "100.00"
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="margin">
+```
+
+```json
+{
+  "symbol": "BTCUSDT",
+  "marketType": "MARGIN",
+  "side": "SELL",
+  "type": "LIMIT",
+  "timeInForce": "GTC",
+  "quantity": "0.005",
+  "price": "45000.00",
+  "stopLossPrice": "47000.00",
+  "takeProfitPrice": "40000.00",
+  "marginParams": {
+    "positionSide": "SHORT",
+    "leverage": 5,
+    "isOpenPosition": true
+  }
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+```json
+{
+  "orderId": "20005",
+  "clientOrderId": "my-bot-42",
+  "symbol": "BTCUSDT",
+  "marketType": "SPOT",
+  "side": "BUY",
+  "type": "LIMIT",
+  "timeInForce": "GTC",
+  "status": "NEW",
+  "price": "45000.00",
+  "origQty": "0.00100000",
+  "executedQty": "0.00000000",
+  "cummulativeQuoteQty": "0",
+  "createdAt": 1714560000000,
+  "updatedAt": 1714560000000
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## رفتار `quoteOrderQty`
+
+هنگام ارسال `quoteOrderQty` با `type=MARKET`:
+
+1. سرور مقدار `quantity` معادل را با استفاده از قیمت لحظه‌ای بازار محاسبه می‌کند.
+2. اگر مقدار محاسبه‌شده از `minQty` کوچک‌تر باشد یا قیمت مرجع در دسترس نباشد، درخواست با خطا رد می‌شود.
+
+## قواعد اعتبارسنجی
+
+- `quantity` و `quoteOrderQty` متقابل انحصاری هستند.
+- `quoteOrderQty` فقط با `type=MARKET` قانونی است.
+- `price` برای `LIMIT` و `STOP_LOSS_LIMIT` الزامی است.
+- `stopPrice` برای `STOP_LOSS` و `STOP_LOSS_LIMIT` الزامی است.
+- `takeProfitPrice` و `stopLossPrice` فقط برای `MARGIN` قانونی هستند.
+- `marginParams` تنها در `MARGIN` ارسال می‌شود.
+
+## کدهای خطای متداول
+
+| کد | شرایط |
+| --- | --- |
+| -1013 | `quantity` خارج از `minQty/maxQty/stepSize` یا حداقل ارزش سفارش رعایت نشده. |
+| -1102 | یکی از پارامترهای اجباری (مثلاً `price` در `LIMIT`) ارسال نشده است. |
+| -1121 | نماد ناشناخته است. |
+| -2010 | موجودی کافی نیست، یا قیمت مرجع برای `quoteOrderQty` در دسترس نیست. |
+| -3000 | پارامتر `marginParams` نامعتبر (positionSide، leverage و ...). |
+
+:::tip
+برای بهترین تجربه، قبل از ثبت سفارش، `tickSize` و `stepSize` نماد را از [`/exchangeInfo`](../exchange-info) دریافت کنید و در سمت کلاینت به آن‌ها پایبند باشید.
+:::

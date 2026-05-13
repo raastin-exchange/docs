@@ -1,0 +1,140 @@
+---
+sidebar_position: 5
+sidebar_label: لیست سفارش‌ها و فیل‌ها
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# لیست سفارش‌ها و فیل‌ها
+
+اندپوینت‌های لیست همگی از قرارداد **cursor pagination** پیروی می‌کنند که در صفحه [قراردادها و قواعد](../../conventions) توضیح داده شد.
+
+## GET /api/v2/openOrders
+
+سفارش‌های فعال کاربر (status در `NEW` و `PENDING_NEW`).
+
+### پارامترهای کوئری
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `symbol` | String | محدودسازی به یک نماد. |
+| `side` | String | `BUY` یا `SELL`. |
+| `marketType` | String | `SPOT` یا `MARGIN`. |
+| `fromId`، `startTime`، `endTime`، `limit` | — | استاندارد cursor pagination. |
+
+## GET /api/v2/allOrders
+
+تاریخچه‌ی کامل سفارش‌های کاربر، با فیلتر اختیاری روی وضعیت.
+
+### پارامترهای کوئری
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `symbol` | String | محدودسازی به یک نماد. |
+| `side` | String | `BUY` یا `SELL`. |
+| `marketType` | String | `SPOT` یا `MARGIN`. |
+| `status` | String | `NEW`، `PARTIALLY_FILLED`، `FILLED`، `CANCELED`، `PENDING_NEW`، `EXPIRED`. |
+| `fromId`، `startTime`، `endTime`، `limit` | — | استاندارد cursor pagination. |
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "data": [
+    {
+      "orderId": "20510",
+      "clientOrderId": null,
+      "symbol": "BTCUSDT",
+      "marketType": "SPOT",
+      "side": "SELL",
+      "type": "MARKET",
+      "timeInForce": "GTC",
+      "status": "FILLED",
+      "origQty": "0.005",
+      "executedQty": "0.005",
+      "cummulativeQuoteQty": "225.00",
+      "avgPrice": "45000.00",
+      "createdAt": 1714559970000,
+      "updatedAt": 1714559972000
+    }
+  ],
+  "nextCursor": "20510",
+  "hasMore": true
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+### نگاشت وضعیت‌ها
+
+سرور وضعیت داخلی را به enumهای استاندارد v2 ترجمه می‌کند:
+
+| داخلی | v2 |
+| --- | --- |
+| `new` با `filled_amount = 0` | `NEW` |
+| `new` با `0 < filled_amount < amount` | `PARTIALLY_FILLED` |
+| `pending` | `PENDING_NEW` |
+| `filled` | `FILLED` |
+| `canceled` با `IOC` یا `FOK` که کامل پر نشد | `EXPIRED` |
+| `canceled` با `GTC` | `CANCELED` |
+
+## GET /api/v2/myTrades
+
+ردیف‌های پر شدن (fill) یک سفارش. ربات‌ها از این اندپوینت برای بازسازی دقیق اجراها (price، quantity، fee) استفاده می‌کنند — بدون نیاز به polling روی وضعیت سفارش.
+
+### پارامترهای کوئری
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `symbol` | String | محدودسازی به یک نماد. |
+| `orderId` | int64 | محدودسازی به فیل‌های یک سفارش خاص. |
+| `fromId`، `startTime`، `endTime`، `limit` | — | استاندارد cursor pagination. |
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "data": [
+    {
+      "tradeId": "98123",
+      "orderId": "20510",
+      "symbol": "BTCUSDT",
+      "marketType": "SPOT",
+      "side": "SELL",
+      "price": "45000.00",
+      "quantity": "0.005",
+      "quoteQty": "225.00",
+      "commission": "0.000005",
+      "commissionAsset": "USDT",
+      "isMaker": false,
+      "time": 1714559972000
+    }
+  ],
+  "nextCursor": "98123",
+  "hasMore": false
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+### معنی فیلدها
+
+| فیلد | توضیح |
+| --- | --- |
+| `quoteQty` | `quantity * price` — مقدار ارز quote جابه‌جا شده. |
+| `commission` | کارمزد به همان واحدی که در سمت trader کسر شده. |
+| `commissionAsset` | برای `BUY` معمولاً ارز پایه، برای `SELL` ارز quote. |
+| `isMaker` | اگر سفارش maker بوده `true` است. |

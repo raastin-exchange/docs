@@ -1,0 +1,50 @@
+---
+sidebar_position: 2
+sidebar_label: ضریب اهرم
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# ضریب اهرم
+
+## GET /api/v2/leverage
+
+ضریب پیکربندی‌شده‌ی کاربر برای یک نماد. مقدار با حداکثر مجاز (سیستم/نماد/حساب) clamp می‌شود.
+
+### پارامترهای کوئری
+
+| نام | نوع | اجباری | توضیح |
+| --- | --- | --- | --- |
+| `symbol` | String | ✓ | نماد به فرم فشرده (مثال: `BTCUSDT`). |
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "symbol": "BTCUSDT",
+  "leverage": 5,
+  "maxLeverage": 10
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## POST /api/v2/leverage
+
+تنظیم ضریب اهرم برای یک نماد. سرور مقدار را قبل از ذخیره با سقف مجاز clamp می‌کند.
+
+### بدنه درخواست
+
+| نام | نوع | اجباری | توضیح |
+| --- | --- | --- | --- |
+| `symbol` | String | ✓ | نماد به فرم فشرده. |
+| `leverage` | Integer | ✓ | ضریب جدید (1 تا 20). |
+
+پاسخ معادل GET است (ضریب جدید و سقف مجاز).

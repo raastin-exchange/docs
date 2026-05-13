@@ -1,0 +1,83 @@
+---
+sidebar_position: 1
+sidebar_label: لیست و دریافت پوزیشن
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# پوزیشن‌های مارجین
+
+## GET /api/v2/positions
+
+لیست پوزیشن‌های کاربر با cursor pagination.
+
+### پارامترهای کوئری
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `symbol` | String | محدودسازی به یک نماد (مانند `BTCUSDT`). |
+| `status` | String | `open`، `closed`، `terminating`. |
+| `source` | String | `orderbook`، `otc`، `strategy`. |
+| `stat` | String | `0` (پایه) یا `1` (دارای aggregates مانند P&L closed). |
+| `fromId`، `startTime`، `endTime`، `limit` | — | استاندارد cursor pagination. |
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "data": [
+    {
+      "id": 8821,
+      "created": "2025-04-30T10:15:23Z",
+      "account": 123456,
+      "symbol": { "id": 1, "name": "BTC/IRT" },
+      "side": "long",
+      "status": "open",
+      "leverage": 5,
+      "amount": "0.05",
+      "averagePrice": "1100000000",
+      "liquidationPrice": "880000000",
+      "equity": "200000",
+      "pnl": "150000"
+    }
+  ],
+  "nextCursor": "100",
+  "hasMore": false
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## GET /api/v2/positions/{`positionId`}
+
+دریافت یک پوزیشن خاص با شناسه‌ی عددی آن. پارامتر `stat=0|1` شکل پاسخ را تعیین می‌کند.
+
+## POST /api/v2/positions/{`positionId`}/close
+
+بستن سریع کامل پوزیشن (fast-close). معادل سفارش بازار با `isOpenPosition=false` و قیمت بازار.
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "positionId": "8821",
+  "status": "CLOSING"
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+پس از این فراخوانی، وضعیت پوزیشن چند ثانیه بعد به `closed` خواهد رفت (پس از پر شدن fast-close order توسط موتور).
