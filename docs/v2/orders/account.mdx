@@ -1,0 +1,71 @@
+---
+sidebar_position: 2
+sidebar_label: موجودی حساب
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# موجودی حساب
+
+<div dir="ltr" style={{textAlign: 'left'}}>
+
+    GET /api/v2/account
+
+</div>
+
+موجودی هر دارایی را به تفکیک نوع کیف‌پول (SPOT، MARGIN، LOAN) برمی‌گرداند.
+
+## پاسخ
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "accountId": 123456,
+  "balances": [
+    {
+      "asset": "BTC",
+      "walletType": "SPOT",
+      "free": "0.5",
+      "locked": "0.1",
+      "total": "0.6"
+    },
+    {
+      "asset": "USDT",
+      "walletType": "SPOT",
+      "free": "5000.00",
+      "locked": "0",
+      "total": "5000.00"
+    },
+    {
+      "asset": "USDT",
+      "walletType": "MARGIN",
+      "free": "2000.00",
+      "locked": "300.00",
+      "total": "2300.00"
+    }
+  ]
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+### معنی فیلدها
+
+| فیلد | معنا |
+| --- | --- |
+| `free` | موجودی قابل‌استفاده — معادل `balance - locked + credit`. |
+| `locked` | بخش قفل‌شده برای سفارش‌های در حال انتظار. |
+| `total` | کل موجودی (شامل اعتبارها). |
+| `walletType` | نوع کیف‌پول: `SPOT`، `MARGIN`، یا `LOAN` (در آینده). |
+
+:::info
+این اندپوینت فقط موجودی‌های اصلی حساب کاربری را برمی‌گرداند.
+:::

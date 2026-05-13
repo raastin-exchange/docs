@@ -1,0 +1,1038 @@
+openapi: 3.1.0
+info:
+  title: Raastin Order API v2
+  version: "2.0.0"
+  summary: Public, bot-compatible REST surface for the Raastin matching engine.
+  description: |
+    The v2 Order API is a clean, bot-native REST surface modeled after Binance Spot,
+    OKX Unified, and KuCoin HF. It coexists with the legacy v1 namespace at
+    `/api/v1/*` — v1 stays for internal callers; v2 is the public surface trading
+    bots (Hummingbot, Freqtrade, custom algo stacks) target.
+
+    ## Conventions
+
+    | Convention | Choice |
+    | --- | --- |
+    | Symbol format | Compact uppercase, no separator — `BTCUSDT`, `ETHIRT`. The resolver also accepts `BTC/IRT`, `BTC-IRT`. |
+    | Endpoint structure | Unified `/orders` family with a `marketType` discriminator. |
+    | Pagination | Cursor-based: `fromId` + `startTime` + `endTime` + `limit`. Response envelope: `{ data, nextCursor, hasMore }`. |
+    | JSON style | camelCase keys, UPPERCASE string enums, all decimals as strings. |
+    | Timestamps | Unix milliseconds (integer). |
+    | Auth | JWT Bearer. |
+    | Errors | `{ code, message, field? }` with stable numeric codes (Binance-aligned where possible). |
+
+    ## Versioning & lifecycle
+
+    The v2 surface is mounted only when the operator sets `API_V2_ENABLED=true`.
+    v1 endpoints (`/api/v1/market/*`, `/api/v1/margin/*`) and the legacy panel-facing
+    `/api/v2/margin/*` routes remain available indefinitely.
+
+  contact:
+    name: Raastin Exchange
+    url: https://raastin.com
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Raastin-Proprietary
+
+servers:
+  - url: https://api.raastin.com
+    description: Production
+  - url: https://api.staging.raastin.com
+    description: Staging
+  - url: http://localhost:8080
+    description: Local development
+
+tags:
+  - name: Utility
+    description: Public endpoints — server time, exchange metadata.
+  - name: Account
+    description: Caller's balances and account-scoped reads.
+  - name: Orders
+    description: Single-order lifecycle (create, get, modify, cancel).
+  - name: Orders (Batch)
+    description: Up to 20 orders per call.
+  - name: Orders (Query)
+    description: Listing endpoints — active orders, history.
+  - name: Trades
+    description: Executed-fill records (the per-match rows).
+  - name: Margin
+    description: Positions, leverage, transfers, close.
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/v2/time:
+    get:
+      tags: [Utility]
+      summary: Server time
+      description: |
+        Returns the server's current time in Unix milliseconds. Bots should call
+        this on connection start to detect clock drift.
+      security: []
+      operationId: getServerTime
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerTimeResponse"
+              examples:
+                default:
+                  value: { serverTime: 1714560000000 }
+
+  /api/v2/exchangeInfo:
+    get:
+      tags: [Utility]
+      summary: Exchange / symbol metadata
+      description: |
+        Returns one entry per enabled trading pair with the metadata bots need to
+        size orders correctly: `tickSize`, `stepSize`, `minQty`, `maxQty`, margin
+        capability, max leverage, and the list of supported order types.
+
+        Optional `symbol` query param scopes the response to a single pair.
+      security: []
+      operationId: getExchangeInfo
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+          example: BTCUSDT
+          description: When set, only that symbol is returned. Accepts BTCUSDT, BTC-USDT, or BTC/USDT forms.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExchangeInfoResponse"
+        "404":
+          description: Unknown symbol
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+  /api/v2/account:
+    get:
+      tags: [Account]
+      summary: Get account balances
+      description: |
+        Returns the caller's per-asset, per-wallet-type balance summary.
+        Wallet types: SPOT, MARGIN, LOAN. Only main-user wallets (variant=null);
+        strategy/bot reserve wallets are returned via a separate JWT-delegated flow.
+      operationId: getAccount
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AccountResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /api/v2/orders:
+    post:
+      tags: [Orders]
+      summary: Place a new order
+      description: |
+        Creates a new order (spot or margin). `marginParams` is required when
+        `marketType=MARGIN` and forbidden when `marketType=SPOT`. `quantity`
+        and `quoteOrderQty` are mutually exclusive — `quoteOrderQty` only legal
+        when `type=MARKET`.
+
+        ### `quoteOrderQty` translation
+
+        When `quoteOrderQty` is supplied, the handler resolves the opposite-side
+        top-of-book price via the same source the engine uses
+        (GetMarketPriceWithBuffer), then computes:
+
+            quantity = floor(quoteOrderQty / price, stepSize)
+
+        If no reference price is available (cold-start orderbook), the request
+        is rejected with code -2010.
+      operationId: createOrder
+      parameters:
+        - name: fastMode
+          in: query
+          required: false
+          schema: { type: string, enum: ["1"] }
+          description: When `1`, the server returns immediately after publishing to Kafka instead of waiting for the engine ack.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateOrderRequest" }
+            examples:
+              spotLimitBuy:
+                summary: Spot LIMIT buy
+                value:
+                  symbol: BTCUSDT
+                  marketType: SPOT
+                  side: BUY
+                  type: LIMIT
+                  timeInForce: GTC
+                  quantity: "0.001"
+                  price: "45000.00"
+                  clientOrderId: my-bot-42
+              spotMarketBuyByQuote:
+                summary: Spot MARKET buy with quoteOrderQty
+                value:
+                  symbol: BTCUSDT
+                  marketType: SPOT
+                  side: BUY
+                  type: MARKET
+                  quoteOrderQty: "100.00"
+              marginShortOpen:
+                summary: Margin SHORT open with TP/SL
+                value:
+                  symbol: BTCUSDT
+                  marketType: MARGIN
+                  side: SELL
+                  type: LIMIT
+                  timeInForce: GTC
+                  quantity: "0.005"
+                  price: "45000.00"
+                  stopLossPrice: "47000.00"
+                  takeProfitPrice: "40000.00"
+                  marginParams:
+                    positionSide: SHORT
+                    leverage: 5
+                    isOpenPosition: true
+      responses:
+        "201":
+          description: Order accepted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderResponse" }
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+    get:
+      tags: [Orders]
+      summary: Lookup an order by clientOrderId
+      description: |
+        Retrieves a single order by `clientOrderId`. Per Binance's pattern, the
+        client-supplied ID is scoped per symbol — provide `symbol` to
+        disambiguate. Without `symbol` the most-recent match across the account
+        is returned.
+      operationId: lookupOrderByClientOrderId
+      parameters:
+        - name: clientOrderId
+          in: query
+          required: true
+          schema: { type: string }
+        - name: symbol
+          in: query
+          required: false
+          schema: { type: string }
+          example: BTCUSDT
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/OrderNotFound" }
+    delete:
+      tags: [Orders]
+      summary: Cancel by clientOrderId
+      description: Cancels the most-recent order matching `clientOrderId`.
+      operationId: cancelOrderByClientOrderId
+      parameters:
+        - name: clientOrderId
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Cancel accepted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/OrderNotFound" }
+
+  /api/v2/orders/{orderId}:
+    get:
+      tags: [Orders]
+      summary: Get an order by orderId
+      operationId: getOrder
+      parameters:
+        - $ref: "#/components/parameters/OrderIDPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/OrderNotFound" }
+    put:
+      tags: [Orders]
+      summary: Modify an order
+      description: |
+        Modifies price, quantity, stopPrice, and/or TP/SL on a still-resting
+        order. **Strategy-delegated callers cannot modify** — they must cancel
+        and re-place. TP/SL must be modified through this single-order endpoint
+        (the batch surface rejects TP/SL changes).
+      operationId: modifyOrder
+      parameters:
+        - $ref: "#/components/parameters/OrderIDPath"
+        - name: fastMode
+          in: query
+          required: false
+          schema: { type: string, enum: ["1"] }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ModifyOrderRequest" }
+      responses:
+        "200":
+          description: Modified
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderResponse" }
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/OrderNotFound" }
+    delete:
+      tags: [Orders]
+      summary: Cancel an order
+      operationId: cancelOrder
+      parameters:
+        - $ref: "#/components/parameters/OrderIDPath"
+      responses:
+        "200":
+          description: Cancel accepted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/OrderNotFound" }
+
+  /api/v2/orders/batch:
+    post:
+      tags: [Orders (Batch)]
+      summary: Place multiple orders
+      description: |
+        Up to 20 orders per call. Each row goes through the same validation
+        and Kafka publish path as a single POST `/orders`. One bad row does
+        NOT abort the batch — failures attach a per-row error envelope.
+      operationId: batchCreateOrders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BatchCreateRequest" }
+      responses:
+        "200":
+          description: Per-row results
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BatchCreateResponse" }
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    put:
+      tags: [Orders (Batch)]
+      summary: Modify multiple orders
+      description: |
+        Up to 20 modifications per call. TP/SL fields are NOT supported in
+        batch — use single-modify for those. Strategy-delegated callers are
+        rejected with 403 (same rule as single-modify).
+      operationId: batchModifyOrders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BatchModifyRequest" }
+      responses:
+        "200":
+          description: Modify summary
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    delete:
+      tags: [Orders (Batch)]
+      summary: Cancel multiple orders
+      description: Up to 20 orderId+clientOrderId entries per call combined.
+      operationId: batchCancelOrders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BatchCancelRequest" }
+      responses:
+        "200":
+          description: Cancel summary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CancelSummary" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /api/v2/openOrders:
+    get:
+      tags: [Orders (Query)]
+      summary: List active orders
+      description: Cursor-paginated; status restricted to NEW + PENDING_NEW.
+      operationId: listOpenOrders
+      parameters:
+        - $ref: "#/components/parameters/QuerySymbol"
+        - $ref: "#/components/parameters/QuerySide"
+        - $ref: "#/components/parameters/QueryMarketType"
+        - $ref: "#/components/parameters/QueryFromID"
+        - $ref: "#/components/parameters/QueryStartTime"
+        - $ref: "#/components/parameters/QueryEndTime"
+        - $ref: "#/components/parameters/QueryLimit"
+      responses:
+        "200":
+          description: Page of orders
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageOfOrders" }
+    delete:
+      tags: [Orders (Query)]
+      summary: Cancel all open orders on a symbol
+      operationId: cancelAllOpenOrders
+      parameters:
+        - $ref: "#/components/parameters/QuerySymbolRequired"
+      responses:
+        "200":
+          description: Cancel summary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CancelSummary" }
+
+  /api/v2/allOrders:
+    get:
+      tags: [Orders (Query)]
+      summary: List order history
+      operationId: listAllOrders
+      parameters:
+        - $ref: "#/components/parameters/QuerySymbol"
+        - $ref: "#/components/parameters/QuerySide"
+        - $ref: "#/components/parameters/QueryMarketType"
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [NEW, PARTIALLY_FILLED, FILLED, CANCELED, PENDING_NEW, EXPIRED]
+        - $ref: "#/components/parameters/QueryFromID"
+        - $ref: "#/components/parameters/QueryStartTime"
+        - $ref: "#/components/parameters/QueryEndTime"
+        - $ref: "#/components/parameters/QueryLimit"
+      responses:
+        "200":
+          description: Page of orders
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageOfOrders" }
+
+  /api/v2/myTrades:
+    get:
+      tags: [Trades]
+      summary: List your trade fills
+      description: |
+        Per-fill records (`market_trade`). v1 always returned `trades:[]` on
+        order responses — this endpoint is the v2 surface bots use to
+        reconstruct executions.
+      operationId: listMyTrades
+      parameters:
+        - $ref: "#/components/parameters/QuerySymbol"
+        - name: orderId
+          in: query
+          required: false
+          schema: { type: integer, format: int64 }
+          description: When set, restricts trades to this order.
+        - $ref: "#/components/parameters/QueryFromID"
+        - $ref: "#/components/parameters/QueryStartTime"
+        - $ref: "#/components/parameters/QueryEndTime"
+        - $ref: "#/components/parameters/QueryLimit"
+      responses:
+        "200":
+          description: Page of trades
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageOfTrades" }
+
+  /api/v2/positions:
+    get:
+      tags: [Margin]
+      summary: List margin positions
+      operationId: listPositions
+      parameters:
+        - $ref: "#/components/parameters/QuerySymbol"
+        - name: status
+          in: query
+          required: false
+          schema: { type: string, enum: [open, closed] }
+        - name: source
+          in: query
+          required: false
+          schema: { type: string }
+        - name: stat
+          in: query
+          required: false
+          schema: { type: string, enum: ["0", "1"] }
+          description: "0 = basic, 1 = detailed (with aggregates)"
+        - $ref: "#/components/parameters/QueryFromID"
+        - $ref: "#/components/parameters/QueryStartTime"
+        - $ref: "#/components/parameters/QueryEndTime"
+        - $ref: "#/components/parameters/QueryLimit"
+      responses:
+        "200":
+          description: Page of positions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: "#/components/schemas/PositionItem" } }
+                  nextCursor: { type: string }
+                  hasMore: { type: boolean }
+
+  /api/v2/positions/{positionId}:
+    get:
+      tags: [Margin]
+      summary: Get a position
+      operationId: getPosition
+      parameters:
+        - name: positionId
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+        - name: stat
+          in: query
+          required: false
+          schema: { type: string, enum: ["0", "1"] }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PositionItem" }
+
+  /api/v2/positions/{positionId}/close:
+    post:
+      tags: [Margin]
+      summary: Fast-close a position
+      operationId: closePosition
+      parameters:
+        - name: positionId
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200":
+          description: Close accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  positionId: { type: string }
+                  status: { type: string, enum: [CLOSING] }
+
+  /api/v2/leverage:
+    get:
+      tags: [Margin]
+      summary: Get the configured leverage for a symbol
+      operationId: getLeverage
+      parameters:
+        - $ref: "#/components/parameters/QuerySymbolRequired"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LeverageResponse" }
+    post:
+      tags: [Margin]
+      summary: Set leverage for a symbol
+      operationId: setLeverage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [symbol, leverage]
+              properties:
+                symbol: { type: string, example: BTCUSDT }
+                leverage: { type: integer, minimum: 1, maximum: 20 }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LeverageResponse" }
+
+  /api/v2/margin/transfers:
+    get:
+      tags: [Margin]
+      summary: List margin transfer history
+      operationId: listMarginTransfers
+      parameters:
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [SPOT_TO_MARGIN, MARGIN_TO_SPOT, MARGIN_TO_POSITION, POSITION_TO_MARGIN]
+        - $ref: "#/components/parameters/QueryFromID"
+        - $ref: "#/components/parameters/QueryLimit"
+      responses:
+        "200":
+          description: Page of transfers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: "#/components/schemas/MarginTransferResponse" } }
+                  nextCursor: { type: string }
+                  hasMore: { type: boolean }
+    post:
+      tags: [Margin]
+      summary: Transfer between spot, margin, and position wallets
+      operationId: createMarginTransfer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateMarginTransferRequest" }
+      responses:
+        "201":
+          description: Transfer accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type: { type: string }
+                  asset: { type: string }
+                  amount: { type: string }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    OrderIDPath:
+      name: orderId
+      in: path
+      required: true
+      schema: { type: integer, format: int64 }
+      description: Server-assigned numeric order id.
+    QuerySymbol:
+      name: symbol
+      in: query
+      required: false
+      schema: { type: string }
+      example: BTCUSDT
+    QuerySymbolRequired:
+      name: symbol
+      in: query
+      required: true
+      schema: { type: string }
+      example: BTCUSDT
+    QuerySide:
+      name: side
+      in: query
+      required: false
+      schema: { type: string, enum: [BUY, SELL] }
+    QueryMarketType:
+      name: marketType
+      in: query
+      required: false
+      schema: { type: string, enum: [SPOT, MARGIN] }
+    QueryFromID:
+      name: fromId
+      in: query
+      required: false
+      schema: { type: integer, format: int64 }
+      description: |
+        Cursor — return rows with id strictly less than this value. Use the
+        `nextCursor` from a prior response to walk pages forward.
+    QueryStartTime:
+      name: startTime
+      in: query
+      required: false
+      schema:
+        oneOf:
+          - { type: integer, format: int64 }
+          - { type: string, format: date-time }
+      description: Inclusive lower bound on `created`. Accepts Unix milliseconds or ISO 8601.
+    QueryEndTime:
+      name: endTime
+      in: query
+      required: false
+      schema:
+        oneOf:
+          - { type: integer, format: int64 }
+          - { type: string, format: date-time }
+      description: Inclusive upper bound on `created`.
+    QueryLimit:
+      name: limit
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, maximum: 1000, default: 100 }
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid JWT
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+          examples:
+            invalidAuth:
+              value: { code: -2014, message: "Invalid API key/JWT" }
+    Forbidden:
+      description: Operation not permitted for this caller
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    OrderNotFound:
+      description: Order not found
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+          examples:
+            notFound:
+              value: { code: -2013, message: "Order does not exist" }
+    RateLimited:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+  schemas:
+    ErrorEnvelope:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: integer
+          description: |
+            Stable numeric error code. Negative integers, Binance-aligned where
+            possible. Bots key off this value, not the human message.
+        message:
+          type: string
+        field:
+          type: string
+          description: Set for validation errors that target a single request field.
+      examples:
+        - code: -2010
+          message: Insufficient balance.
+          field: quantity
+        - code: -1121
+          message: Unknown symbol
+          field: symbol
+
+    ServerTimeResponse:
+      type: object
+      required: [serverTime]
+      properties:
+        serverTime: { type: integer, format: int64, description: Unix ms }
+
+    ExchangeInfoResponse:
+      type: object
+      required: [serverTime, symbols]
+      properties:
+        serverTime: { type: integer, format: int64 }
+        symbols:
+          type: array
+          items: { $ref: "#/components/schemas/ExchangeInfoSymbol" }
+
+    ExchangeInfoSymbol:
+      type: object
+      required: [symbol, baseAsset, quoteAsset, status, tickSize, stepSize, minQty, maxQty, marginEnabled, supportedOrderTypes]
+      properties:
+        symbol: { type: string, example: BTCUSDT }
+        baseAsset: { type: string, example: BTC }
+        quoteAsset: { type: string, example: USDT }
+        status: { type: string, enum: [TRADING, DISABLED] }
+        tickSize: { type: integer, description: Number of decimal places allowed on price. }
+        stepSize: { type: integer, description: Number of decimal places allowed on quantity. }
+        minQty: { type: string }
+        maxQty: { type: string }
+        marginEnabled: { type: boolean }
+        maxLeverage: { type: [integer, "null"] }
+        supportedOrderTypes:
+          type: array
+          items: { type: string, enum: [LIMIT, MARKET, STOP_LOSS, STOP_LOSS_LIMIT] }
+
+    AccountResponse:
+      type: object
+      required: [accountId, balances]
+      properties:
+        accountId: { type: integer, format: int64 }
+        balances:
+          type: array
+          items: { $ref: "#/components/schemas/AccountBalance" }
+
+    AccountBalance:
+      type: object
+      required: [asset, walletType, free, locked, total]
+      properties:
+        asset: { type: string, example: USDT }
+        walletType: { type: string, enum: [SPOT, MARGIN, LOAN] }
+        free: { type: string }
+        locked: { type: string }
+        total: { type: string }
+
+    CreateOrderRequest:
+      type: object
+      required: [symbol, marketType, side, type]
+      properties:
+        symbol: { type: string, example: BTCUSDT }
+        marketType: { type: string, enum: [SPOT, MARGIN] }
+        side: { type: string, enum: [BUY, SELL] }
+        type: { type: string, enum: [LIMIT, MARKET, STOP_LOSS, STOP_LOSS_LIMIT] }
+        timeInForce:
+          type: string
+          enum: [GTC, IOC, FOK]
+          description: Required for LIMIT and STOP_LOSS_LIMIT. Ignored otherwise.
+        quantity:
+          type: string
+          description: Base-asset quantity. Mutually exclusive with `quoteOrderQty`.
+        quoteOrderQty:
+          type: string
+          description: Quote-asset spend amount. Only legal when `type=MARKET`.
+        price:
+          type: string
+          description: Required for LIMIT / STOP_LOSS_LIMIT.
+        stopPrice:
+          type: string
+          description: Required for STOP_LOSS / STOP_LOSS_LIMIT.
+        clientOrderId:
+          type: string
+          description: Optional caller-supplied ID. Unique per account on status=NEW.
+        takeProfitPrice:
+          type: string
+          description: Only legal when `marketType=MARGIN`.
+        stopLossPrice:
+          type: string
+          description: Only legal when `marketType=MARGIN`.
+        marginParams: { $ref: "#/components/schemas/MarginOrderParams" }
+
+    ModifyOrderRequest:
+      type: object
+      properties:
+        quantity: { type: string }
+        unfilledQty: { type: string, description: Alternative to quantity — sets the target remaining-unfilled amount. }
+        price: { type: string }
+        stopPrice: { type: string }
+        takeProfitPrice: { type: string, description: Non-empty sets/replaces; empty string clears. }
+        stopLossPrice: { type: string }
+
+    MarginOrderParams:
+      type: object
+      properties:
+        positionSide: { type: string, enum: [LONG, SHORT] }
+        leverage: { type: integer, minimum: 1, maximum: 20 }
+        reduceOnly: { type: boolean, default: false }
+        isOpenPosition: { type: boolean }
+        positionId: { type: integer, format: int64 }
+
+    OrderResponse:
+      type: object
+      required: [orderId, symbol, marketType, side, type, status, origQty, executedQty, cummulativeQuoteQty, createdAt, updatedAt]
+      properties:
+        orderId: { type: string }
+        clientOrderId: { type: string }
+        symbol: { type: string }
+        marketType: { type: string, enum: [SPOT, MARGIN] }
+        side: { type: string, enum: [BUY, SELL] }
+        type: { type: string, enum: [LIMIT, MARKET, STOP_LOSS, STOP_LOSS_LIMIT] }
+        timeInForce: { type: string, enum: [GTC, IOC, FOK] }
+        status: { type: string, enum: [NEW, PARTIALLY_FILLED, FILLED, CANCELED, PENDING_NEW, EXPIRED, REJECTED] }
+        price: { type: string }
+        stopPrice: { type: string }
+        origQty: { type: string }
+        origQuoteQty: { type: string }
+        executedQty: { type: string }
+        cummulativeQuoteQty:
+          type: string
+          description: Cumulative quote-asset traded amount. Note the Binance-original double-`m` spelling is preserved on the wire.
+        avgPrice: { type: string }
+        createdAt: { type: integer, format: int64, description: Unix ms }
+        updatedAt: { type: integer, format: int64, description: Unix ms }
+        takeProfitPrice: { type: string }
+        stopLossPrice: { type: string }
+        marginParams: { $ref: "#/components/schemas/MarginOrderParams" }
+
+    BatchCreateRequest:
+      type: object
+      required: [orders]
+      properties:
+        orders:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items: { $ref: "#/components/schemas/CreateOrderRequest" }
+
+    BatchCreateResponse:
+      type: object
+      required: [results]
+      properties:
+        results:
+          type: array
+          items: { $ref: "#/components/schemas/BatchItemResult" }
+
+    BatchItemResult:
+      type: object
+      required: [index]
+      properties:
+        index: { type: integer }
+        order: { $ref: "#/components/schemas/OrderResponse" }
+        error: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+    BatchModifyRequest:
+      type: object
+      required: [orders]
+      properties:
+        orders:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items: { $ref: "#/components/schemas/BatchModifyItem" }
+
+    BatchModifyItem:
+      type: object
+      properties:
+        orderId: { type: integer, format: int64 }
+        clientOrderId: { type: string }
+        quantity: { type: string }
+        unfilledQty: { type: string }
+        price: { type: string }
+        stopPrice: { type: string }
+
+    BatchCancelRequest:
+      type: object
+      properties:
+        orderIds:
+          type: array
+          items: { type: integer, format: int64 }
+        clientOrderIds:
+          type: array
+          items: { type: string }
+
+    CancelSummary:
+      type: object
+      required: [canceled, failed]
+      properties:
+        canceled: { type: integer }
+        failed: { type: integer }
+
+    TradeResponse:
+      type: object
+      required: [tradeId, orderId, symbol, marketType, side, price, quantity, quoteQty, commission, commissionAsset, isMaker, time]
+      properties:
+        tradeId: { type: string }
+        orderId: { type: string }
+        symbol: { type: string }
+        marketType: { type: string, enum: [SPOT, MARGIN] }
+        side: { type: string, enum: [BUY, SELL] }
+        price: { type: string }
+        quantity: { type: string }
+        quoteQty: { type: string }
+        commission: { type: string }
+        commissionAsset: { type: string }
+        isMaker: { type: boolean }
+        time: { type: integer, format: int64 }
+
+    PageOfOrders:
+      type: object
+      required: [data, hasMore]
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/OrderResponse" }
+        nextCursor: { type: string }
+        hasMore: { type: boolean }
+
+    PageOfTrades:
+      type: object
+      required: [data, hasMore]
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/TradeResponse" }
+        nextCursor: { type: string }
+        hasMore: { type: boolean }
+
+    PositionItem:
+      type: object
+      description: |
+        Margin position record. Field set varies by `stat`:
+          - stat=0 (basic): MarginPositionSerializer
+          - stat=1 (detailed): MarginPositionDetailedSerializer + aggregates
+      properties:
+        id: { type: integer, format: int64 }
+        created: { type: string, format: date-time }
+        account: { type: integer, format: int64 }
+        symbol: { type: object, additionalProperties: true }
+        side: { type: string, enum: [long, short] }
+        status: { type: string, enum: [open, closed, terminating] }
+        leverage: { type: integer }
+        amount: { type: string }
+        averagePrice: { type: string }
+        liquidationPrice: { type: string }
+        equity: { type: string }
+        pnl: { type: string }
+
+    LeverageResponse:
+      type: object
+      required: [symbol, leverage, maxLeverage]
+      properties:
+        symbol: { type: string }
+        leverage: { type: integer }
+        maxLeverage: { type: integer }
+
+    MarginTransferResponse:
+      type: object
+      required: [transferId, asset, type, amount, time]
+      properties:
+        transferId: { type: integer, format: int64 }
+        asset: { type: string }
+        type: { type: string, enum: [SPOT_TO_MARGIN, MARGIN_TO_SPOT, MARGIN_TO_POSITION, POSITION_TO_MARGIN] }
+        amount: { type: string }
+        symbol: { type: string }
+        positionId: { type: integer, format: int64 }
+        time: { type: integer, format: int64 }
+
+    CreateMarginTransferRequest:
+      type: object
+      required: [type, asset, amount]
+      properties:
+        type: { type: string, enum: [SPOT_TO_MARGIN, MARGIN_TO_SPOT, MARGIN_TO_POSITION, POSITION_TO_MARGIN] }
+        asset: { type: string, example: USDT }
+        amount: { type: string }
+        symbol: { type: string, description: Required for MARGIN_TO_POSITION / POSITION_TO_MARGIN. }
+        positionId: { type: integer, format: int64, description: Required for MARGIN_TO_POSITION / POSITION_TO_MARGIN. }

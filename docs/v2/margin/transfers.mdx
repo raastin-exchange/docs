@@ -1,0 +1,102 @@
+---
+sidebar_position: 3
+sidebar_label: انتقال بین کیف‌پول‌ها
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# انتقال بین کیف‌پول‌ها
+
+اندپوینت‌های انتقال بین کیف‌پول‌های اسپات، مارجین و پوزیشن.
+
+## GET /api/v2/margin/transfers
+
+تاریخچه‌ی انتقال‌های کاربر، با cursor pagination.
+
+### پارامترهای کوئری
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `type` | String | `SPOT_TO_MARGIN`، `MARGIN_TO_SPOT`، `MARGIN_TO_POSITION`، `POSITION_TO_MARGIN`. |
+| `fromId`، `limit` | — | استاندارد cursor pagination. |
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "data": [
+    {
+      "transferId": 4421,
+      "asset": "USDT",
+      "type": "SPOT_TO_MARGIN",
+      "amount": "100.00",
+      "time": 1714560000000
+    }
+  ],
+  "nextCursor": "100",
+  "hasMore": false
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## POST /api/v2/margin/transfers
+
+ایجاد یک انتقال جدید. نوع‌های `*_POSITION` نیازمند `symbol` و `positionId` هستند.
+
+### بدنه درخواست
+
+| نام | نوع | اجباری | توضیح |
+| --- | --- | --- | --- |
+| `type` | String | ✓ | یکی از مقادیر زیر. |
+| `asset` | String | ✓ | نماد دارایی (مانند `USDT`، `IRT`). |
+| `amount` | String | ✓ | مقدار به همان واحد دارایی. |
+| `symbol` | String | شرطی | برای انتقال‌های مارجین ↔ پوزیشن. |
+| `positionId` | int64 | شرطی | برای انتقال‌های مارجین ↔ پوزیشن. |
+
+### نوع‌های پشتیبانی‌شده
+
+| مقدار | معنا |
+| --- | --- |
+| `SPOT_TO_MARGIN` | اسپات → مارجین |
+| `MARGIN_TO_SPOT` | مارجین → اسپات |
+| `MARGIN_TO_POSITION` | مارجین → پوزیشن (افزایش collateral) |
+| `POSITION_TO_MARGIN` | پوزیشن → مارجین (برداشت excess) |
+
+```mdx-code-block
+<Tabs defaultValue="request" values={[{label:'درخواست', value:'request'},{label:'پاسخ', value:'response'}]}>
+<TabItem value="request">
+```
+
+```json
+{
+  "type": "SPOT_TO_MARGIN",
+  "asset": "USDT",
+  "amount": "100.00"
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+```json
+{
+  "type": "SPOT_TO_MARGIN",
+  "asset": "USDT",
+  "amount": "100.00"
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```

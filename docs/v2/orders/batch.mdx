@@ -1,0 +1,157 @@
+---
+sidebar_position: 6
+sidebar_label: عملیات گروهی (batch)
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# عملیات گروهی (batch)
+
+برای کاهش تعداد رفت‌و‌برگشت، v2 سه اندپوینت گروهی دارد. حداکثر تعداد آیتم در هر فراخوانی **۲۰** است (هم‌راستا با KuCoin/OKX).
+
+## POST /api/v2/orders/batch
+
+ثبت چند سفارش به‌صورت گروهی. هر ردیف مستقل پردازش می‌شود: اگر یک ردیف خطا داشته باشد، باقی ردیف‌ها همچنان ثبت می‌شوند.
+
+### بدنه درخواست
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `orders` | Array | فهرست شیء‌های [`CreateOrderRequest`](../place-order). حداکثر ۲۰ آیتم. |
+
+```mdx-code-block
+<Tabs defaultValue="request" values={[{label:'درخواست', value:'request'},{label:'پاسخ', value:'response'}]}>
+<TabItem value="request">
+```
+
+```json
+{
+  "orders": [
+    {
+      "symbol": "BTCUSDT",
+      "marketType": "SPOT",
+      "side": "BUY",
+      "type": "LIMIT",
+      "timeInForce": "GTC",
+      "quantity": "0.001",
+      "price": "45000.00",
+      "clientOrderId": "row-1"
+    },
+    {
+      "symbol": "BTCUSDT",
+      "marketType": "SPOT",
+      "side": "BUY",
+      "type": "LIMIT",
+      "timeInForce": "GTC",
+      "quantity": "0.001",
+      "price": "44500.00",
+      "clientOrderId": "row-2"
+    }
+  ]
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+```json
+{
+  "results": [
+    {
+      "index": 0,
+      "order": {
+        "orderId": "20512",
+        "clientOrderId": "row-1",
+        "symbol": "BTCUSDT",
+        "marketType": "SPOT",
+        "side": "BUY",
+        "type": "LIMIT",
+        "timeInForce": "GTC",
+        "status": "NEW",
+        "price": "45000.00",
+        "origQty": "0.001",
+        "executedQty": "0",
+        "cummulativeQuoteQty": "0",
+        "createdAt": 1714560000000,
+        "updatedAt": 1714560000000
+      }
+    },
+    {
+      "index": 1,
+      "error": {
+        "code": -1013,
+        "message": "amount is less than 0.0001 BTC",
+        "field": "amount"
+      }
+    }
+  ]
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+هر آیتم در `results` دارای `index` است که با ترتیب درخواست تطبیق دارد، چه ردیف موفق باشد چه خطا.
+
+## PUT /api/v2/orders/batch
+
+اصلاح گروهی. **TP/SL در batch پشتیبانی نمی‌شود** — برای تغییر TP/SL از اندپوینت تک‌سفارش `PUT /api/v2/orders/{orderId}` استفاده کنید.
+
+### بدنه درخواست
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `orders` | Array | هر آیتم با `orderId` یا `clientOrderId` به‌علاوه فیلدهای قابل اصلاح. حداکثر ۲۰. |
+
+#### آیتم
+
+| نام | نوع | توضیح |
+| --- | --- | --- |
+| `orderId` | int64 | شناسه سرور. |
+| `clientOrderId` | String | جایگزین `orderId`. |
+| `quantity` | String | مقدار جدید. |
+| `unfilledQty` | String | مقدار باقیمانده‌ی هدف. |
+| `price` | String | قیمت جدید. |
+| `stopPrice` | String | برای `STOP_LOSS_LIMIT`. |
+
+## DELETE /api/v2/orders/batch
+
+لغو گروهی با `orderIds` و/یا `clientOrderIds`. مجموع ورودی نباید از ۲۰ تجاوز کند.
+
+```mdx-code-block
+<Tabs defaultValue="request" values={[{label:'درخواست', value:'request'},{label:'پاسخ', value:'response'}]}>
+<TabItem value="request">
+```
+
+```json
+{
+  "orderIds": [20512, 20513, 20514],
+  "clientOrderIds": ["row-7", "row-9"]
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="response">
+```
+
+```json
+{
+  "canceled": 4,
+  "failed": 1
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+:::tip
+وقتی `canceled` و `failed` با ورودی شما هم‌خوانی ندارد، اغلب علت این است که برخی سفارش‌ها قبلاً به وضعیت `FILLED` یا `CANCELED` رسیده‌اند. در این موارد می‌توانید با [`GET /api/v2/allOrders`](../order-lists) وضعیت نهایی هر سفارش را تأیید کنید.
+:::

@@ -1,0 +1,89 @@
+---
+sidebar_position: 1
+sidebar_label: زمان سرور و متادیتا
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# زمان سرور و متادیتای نمادها
+
+این دو اندپوینت **عمومی** هستند و نیازی به احراز هویت ندارند.
+
+## GET /api/v2/time
+
+زمان فعلی سرور را به‌صورت میلی‌ثانیه یونیکس برمی‌گرداند. ربات‌ها در شروع اتصال آن را فراخوانی می‌کنند تا اختلاف ساعت محلی و سرور را تشخیص دهند.
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "serverTime": 1714560000000
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## GET /api/v2/exchangeInfo
+
+فهرست تمام نمادهای فعال به همراه متادیتای موردنیاز برای محاسبه‌ی سفارش — `tickSize`، `stepSize`، حداقل/حداکثر مقدار، فعال‌بودن مارجین، حداکثر اهرم، و انواع سفارش پشتیبانی‌شده.
+
+### پارامترهای کوئری
+
+| نام | نوع | اجباری | توضیح |
+| --- | --- | --- | --- |
+| `symbol` | String | ✗ | اگر تنظیم شود، فقط همان نماد برگردانده می‌شود. |
+
+```mdx-code-block
+<Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
+<TabItem value="response">
+```
+
+```json
+{
+  "serverTime": 1714560000000,
+  "symbols": [
+    {
+      "symbol": "BTCIRT",
+      "baseAsset": "BTC",
+      "quoteAsset": "IRT",
+      "status": "TRADING",
+      "tickSize": 0,
+      "stepSize": 8,
+      "minQty": "0.00001",
+      "maxQty": "1000",
+      "marginEnabled": true,
+      "maxLeverage": 10,
+      "supportedOrderTypes": ["LIMIT", "MARKET", "STOP_LOSS", "STOP_LOSS_LIMIT"]
+    },
+    {
+      "symbol": "ETHUSDT",
+      "baseAsset": "ETH",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "tickSize": 2,
+      "stepSize": 5,
+      "minQty": "0.0001",
+      "maxQty": "5000",
+      "marginEnabled": true,
+      "maxLeverage": 5,
+      "supportedOrderTypes": ["LIMIT", "MARKET", "STOP_LOSS", "STOP_LOSS_LIMIT"]
+    }
+  ]
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+:::tip
+این اندپوینت را کش کنید. متادیتای نمادها به‌ندرت تغییر می‌کند (admin-driven) و فراخوانی مکرر آن لازم نیست.
+:::

@@ -1,0 +1,68 @@
+---
+sidebar_position: 9
+sidebar_label: مشخصات OpenAPI
+---
+
+# مشخصات OpenAPI 3.1
+
+سطح v2 یک مشخصات کامل OpenAPI 3.1 دارد که می‌توانید از آن برای تولید کلاینت تایپ‌دار (در Python، TypeScript، Go، Rust و غیره) استفاده کنید.
+
+## دانلود
+
+<a href="/docs/openapi/v2.yaml" download>دانلود v2.yaml</a>
+
+## پیش‌نمایش با Redoc
+
+```mdx-code-block
+<div dir='ltr'>
+```
+
+```bash
+npx --yes @redocly/cli@latest preview-docs v2.yaml
+```
+
+```mdx-code-block
+</div>
+```
+
+## تولید کلاینت
+
+نمونه: کلاینت Python با [openapi-generator](https://openapi-generator.tech/):
+
+```mdx-code-block
+<div dir='ltr'>
+```
+
+```bash
+docker run --rm -v "$PWD:/local" openapitools/openapi-generator-cli generate \
+  -i /local/v2.yaml -g python -o /local/clients/python-v2
+```
+
+```mdx-code-block
+</div>
+```
+
+برای TypeScript:
+
+```mdx-code-block
+<div dir='ltr'>
+```
+
+```bash
+npx --yes openapi-typescript v2.yaml -o v2.d.ts
+```
+
+```mdx-code-block
+</div>
+```
+
+## نسخه‌بندی
+
+نسخه‌ی فعلی فایل از فیلد `info.version` در ابتدای spec قابل خواندن است. این فیلد بر اساس semver تغییر می‌کند:
+
+| تغییر | نوع bump |
+| --- | --- |
+| افزودن endpoint جدید | minor |
+| افزودن فیلد اختیاری به یک schema | minor |
+| حذف endpoint یا تغییر شکل پاسخ | major |
+| ثابت شدن کدهای خطا، انواع enum | پایدار — هرگز تغییر نمی‌کند |
