@@ -21,7 +21,7 @@ import TabItem from "@theme/TabItem";
 | `symbol` | String | محدودسازی به یک نماد. |
 | `side` | String | `BUY` یا `SELL`. |
 | `marketType` | String | `SPOT` یا `MARGIN`. |
-| `fromId`، `startTime`، `endTime`، `limit` | — | استاندارد cursor pagination. |
+| `fromId`، `limit` | — | استاندارد cursor pagination. |
 
 ## GET /api/v2/allOrders
 
@@ -35,7 +35,7 @@ import TabItem from "@theme/TabItem";
 | `side` | String | `BUY` یا `SELL`. |
 | `marketType` | String | `SPOT` یا `MARGIN`. |
 | `status` | String | `NEW`، `PARTIALLY_FILLED`، `FILLED`، `CANCELED`، `PENDING_NEW`، `EXPIRED`. |
-| `fromId`، `startTime`، `endTime`، `limit` | — | استاندارد cursor pagination. |
+| `fromId`، `limit` | — | استاندارد cursor pagination. |
 
 ```mdx-code-block
 <Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
@@ -95,7 +95,7 @@ import TabItem from "@theme/TabItem";
 | --- | --- | --- |
 | `symbol` | String | محدودسازی به یک نماد. |
 | `orderId` | int64 | محدودسازی به فیل‌های یک سفارش خاص. |
-| `fromId`، `startTime`، `endTime`، `limit` | — | استاندارد cursor pagination. |
+| `fromId`، `limit` | — | استاندارد cursor pagination. |
 
 ```mdx-code-block
 <Tabs defaultValue="response" values={[{label:'پاسخ', value:'response'}]}>
